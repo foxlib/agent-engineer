@@ -1,590 +1,676 @@
-# Lesson 2: how agents think - LLMs as the reasoning engine
+# Урок 2: Как думают агенты — языковые модели как механизм рассуждений
 
-## Introduction
+## Введение
 
-In Lesson 1, we said that an agent is made of three parts: a model (the brain), tools (the hands), and an orchestration layer (the control loop). In this lesson, we zoom in on the brain.
+В уроке 1 мы говорили, что агент состоит из трех частей: модели (мозг), инструментов (руки) и уровня оркестровки (контур управления). В этом уроке мы подробно рассмотрим мозг.
 
-The language model is the most important component of an agent. It is the part that reads the user's goal, reasons about what to do, decides which tools to call, interprets results, and generates final answers. Everything else in the agent system exists to support or extend what the model can do.
+Языковая модель — наиболее важный компонент агента. Именно она считывает цель пользователя, рассуждает о том, что нужно делать, решает, какие инструменты использовать, интерпретирует результаты и генерирует окончательные ответы. Все остальное в системе агента существует для поддержки или расширения возможностей модели.
 
-Understanding how LLMs work - even at a high level - will make you a significantly better agent builder. You will know why some prompts work and others do not. You will understand why agents sometimes go off the rails. And you will be able to make informed decisions about model selection, prompt design, and system architecture.
+Понимание того, как работают языковые модели — даже на высоком уровне — значительно улучшит ваши навыки создания агентов. Вы будете знать, почему одни подсказки работают, а другие нет. Вы будете понимать, почему агенты иногда сбиваются с пути. И вы сможете принимать обоснованные решения о выборе модели, разработке подсказок и архитектуре системы.
 
 ---
 
-## LLMs as the brain of the agent
+## Большие языковые модели как мозг агента
 
-A large language model is a neural network trained on vast amounts of text data. At its core, it does one thing: **predict the next token** (roughly, the next word or piece of a word) given everything that came before it.
+Большая языковая модель — это нейронная сеть, обученная на огромных массивах текстовых данных. По своей сути, она делает одно: **предсказывает следующий токен** (примерно, следующее слово или часть слова), учитывая все, что было до него.
 
-That sounds simple, but the emergent capabilities from this training are remarkable:
+Звучит просто, но возникающие в результате этого обучения возможности поразительны:
 
-- **Comprehension**: Understanding complex questions and instructions
-- **Reasoning**: Working through multi-step logic problems
-- **Planning**: Breaking a goal into subtasks
-- **Code generation**: Writing and debugging software
-- **Tool selection**: Deciding which function to call and with what parameters
-- **Summarization**: Distilling long documents into key points
-- **Translation**: Converting between languages, formats, and representations
+- **Понимание**: Понимание сложных вопросов и инструкций
+- **Рассуждение**: Решение многошаговых логических задач
+- **Планирование**: Разбиение цели на подзадачи
+- **Генерация кода**: Написание и отладка программного обеспечения
+- **Выбор инструмента**: Определение того, какую функцию вызвать и с какими параметрами
+- **Резюмирование**: Сведение длинных документов к ключевым моментам
+- **Перевод**: Преобразование между языками, форматами и представлениями
 
-### What LLMs can do well
+### Что большие языковые модели умеют делать хорошо
 
-| Capability | Example in Agent Context |
+| Возможности | Пример в контексте агента |
+
 |---|---|
-| Natural language understanding | Parsing a user's request: "Cancel my most recent order" |
-| Reasoning and planning | Deciding: "First I need to find the order, then check if it is cancelable, then cancel it" |
-| Tool selection | Choosing to call `lookup_order(user_id, sort="recent")` |
-| Output formatting | Returning a clean JSON response or friendly message |
-| Error interpretation | Reading an API error and deciding to retry with different parameters |
-| Context synthesis | Combining results from multiple tool calls into a coherent answer |
 
-### What LLMs cannot do (without help)
+| Понимание естественного языка | Анализ запроса пользователя: "Отменить мой последний заказ" |
 
-| Limitation | Why It Matters |
+| Рассуждение и планирование | Принятие решения: "Сначала мне нужно найти заказ, затем проверить, можно ли его отменить, а затем отменить" |
+
+| Выбор инструмента | Выбор вызова `lookup_order(user_id, sort="recent")` |
+
+| Форматирование вывода | Возврат чистого JSON-ответа или дружественного сообщения |
+
+| Интерпретация ошибок | Чтение ошибки API и принятие решения о повторной попытке с другими параметрами |
+
+| Синтез контекста | Объединение результатов нескольких вызовов инструментов в связный ответ |
+
+## Что не могут делать LLM (без посторонней помощи)
+
+| Ограничение | Почему это важно |
+
 |---|---|
-| No real-time data access | The model's knowledge has a training cutoff date |
-| No computation guarantees | LLMs can get math wrong - they predict tokens, not calculate |
-| No persistent memory | Each conversation starts fresh unless you build memory in |
-| No ability to act | Without tools, the model can only generate text |
-| Hallucination risk | Models can generate plausible but incorrect information |
-| Context window limits | There is a maximum amount of text the model can process at once |
+
+| Нет доступа к данным в реальном времени | Знания модели имеют дату окончания обучения |
+
+| Нет гарантий вычислений | Модели LLM могут ошибаться в математике — они предсказывают токены, а не вычисляют |
+
+Отсутствие постоянной памяти | Каждый разговор начинается заново, если вы не создадите память |
+
+Отсутствие возможности действовать | Без инструментов модель может только генерировать текст |
+
+Риск галлюцинаций | Модели могут генерировать правдоподобную, но неверную информацию |
+
+Ограничения контекстного окна | Существует максимальное количество текста, которое модель может обрабатывать одновременно |
 
 This is why agents exist. Tools compensate for the model's inability to act and access live data. Orchestration compensates for its lack of persistent memory and its tendency to go off track.
 
 ---
 
-## How language models process information
+## Как языковые модели обрабатывают информацию
 
-You do not need to understand transformer architecture in detail to build agents, but understanding three key concepts will help you write better prompts and design better systems.
+Вам не нужно досконально разбираться в архитектуре трансформеров, чтобы создавать агентов, но понимание трех ключевых концепций поможет вам писать более качественные подсказки и проектировать более эффективные системы.
 
-### Tokens: the unit of language
+### Токены: единица языка
 
-LLMs do not read characters or words. They read **tokens** - chunks of text that the model has learned to recognize during training. A token might be a whole word, part of a word, or a punctuation mark.
+Языковые модели не читают символы или слова. Они читают **токены** — фрагменты текста, которые модель научилась распознавать во время обучения. Токен может представлять собой целое слово, часть слова или знак препинания.
 
-**Examples:**
+**Примеры:**
 
-| Text | Approximate Tokens |
+| Текст | Примерное количество токенов |
+
 |---|---|
-| "Hello" | 1 token |
-| "Hello, world!" | 3 tokens |
-| "ChatGPT is amazing" | 4 tokens |
-| A typical code function (20 lines) | 100-300 tokens |
-| A full page of English text | ~500-700 tokens |
+| "Привет" | 1 токен |
 
-**Why this matters for agents:**
+| "Привет, мир!" | 3 токена |
 
-- **Billing**: Most APIs charge per token (input + output). Agent workflows use many more tokens than single prompts because every iteration of the loop sends the full context.
-- **Speed**: More tokens = more time to generate. Keep your tool descriptions concise.
-- **Context limits**: There is a maximum number of tokens the model can process in a single call. If your agent's accumulated context exceeds this, you lose information.
+| "ChatGPT — потрясающий" | 4 токена |
 
-### Context windows: the model's working memory
+| Типичная функция кода (20 строк) | 100-300 токенов |
 
-The **context window** is the total number of tokens a model can consider at once. Think of it like the model's desk - everything it needs to reference must fit on this desk.
+| Целая страница английского текста | ~500-700 токенов |
 
-| Model | Context Window |
+**Почему это важно для агентов:**
+
+- **Оплата**: Большинство API взимают плату за токен (вход + выход). Рабочие процессы агентов используют гораздо больше токенов, чем одиночные запросы, потому что каждая итерация цикла отправляет полный контекст.
+
+- **Скорость**: Больше токенов = больше времени на генерацию. Делайте описания инструментов краткими.
+
+- **Ограничения контекста**: Существует максимальное количество токенов, которые модель может обработать за один вызов. Если накопленный контекст вашего агента превышает это значение, вы теряете информацию.
+
+### Окна контекста: рабочая память модели
+
+**Окно контекста** — это общее количество токенов, которые модель может обрабатывать одновременно. Представьте это как стол модели — все, на что ей нужно ссылаться, должно помещаться на этом столе.
+
+| Модель | Окно контекста |
+
 |---|---|
-| Gemini 2.5 Pro | 1,000,000 tokens |
-| Gemini 2.0 Flash | 1,000,000 tokens |
-| GPT-4o | 128,000 tokens |
-| Claude 3.5 Sonnet | 200,000 tokens |
 
-**What goes into the context window during an agent call:**
+| Gemini 2.5 Pro | 1 000 000 токенов |
+
+| Gemini 2.0 Flash | 1 000 000 токенов |
+
+| GPT-4o | 128 000 токенов |
+
+| Claude 3.5 Sonnet | 200 000 токенов |
+
+**Что отображается в контекстном окне во время звонка агента:**
 
 ```
 +------------------------------------------+
-| System instructions ("You are a...")     |  ~200-500 tokens
+| Системные инструкции ("Вы - это...") | ~200-500 токенов
 +------------------------------------------+
-| Tool definitions (names, descriptions,   |  ~500-2000 tokens
-| parameter schemas)                       |
+| Определения инструментов (имена, описания, | ~500-2000 токенов
+| схемы параметров) |
+
 +------------------------------------------+
-| Conversation history                     |  Variable
+| История разговоров | Переменная
 +------------------------------------------+
-| Previous tool calls and results          |  Variable (can grow fast)
+| Предыдущие вызовы инструментов и результаты | Переменная (может быстро увеличиваться)
 +------------------------------------------+
-| Current user message                     |  Variable
+| Сообщение текущего пользователя | Переменная
 +------------------------------------------+
-| = Total must fit within context window   |
+| = Всего должно поместиться в контекстное окно |
 +------------------------------------------+
 ```
 
-**Why this matters for agents:**
+**Почему это важно для агентов:**
 
-As an agent executes multiple steps, the context grows with each tool call and result. A 5-step agent workflow might accumulate thousands of tokens of tool results. If you are not careful, you can exhaust the context window mid-task.
+По мере выполнения агентом множества шагов контекст расширяется с каждым вызовом инструмента и результатом. В пятишаговом рабочем процессе агента могут накапливаться тысячи токенов результатов работы инструментов. Если не быть осторожным, можно исчерпать контекстное окно в середине задачи.
 
-Strategies to manage this:
-- **Summarize** intermediate results instead of keeping raw data
-- **Truncate** long tool outputs to the relevant parts
-- **Use models with large context windows** for complex multi-step tasks
-- **Implement a sliding window** that drops older, less relevant context
+Стратегии управления этим:
+- **Обобщать** промежуточные результаты вместо сохранения исходных данных
+- **Сокращать** длинные выходные данные инструментов до релевантных частей
+- **Использовать модели с большими контекстными окнами** для сложных многошаговых задач
+- **Реализовать скользящее окно**, которое отбрасывает более старый, менее релевантный контекст
 
-### Attention: how the model focuses
+### Внимание: как модель фокусируется
 
-The **attention mechanism** is what allows the model to figure out which parts of the context are relevant to the current decision. When deciding what token to generate next, the model assigns different weights to different parts of the input.
+**Механизм внимания** позволяет модели определять, какие части контекста релевантны текущему решению. При принятии решения о том, какой токен сгенерировать следующим, модель присваивает разные веса разным частям входных данных.
 
-Think of it like reading a long document and highlighting the important parts. The model "highlights" the tokens most relevant to what it is trying to do right now.
+Представьте это как чтение длинного документа и выделение важных частей. Модель «выделяет» токены, наиболее релевантные тому, что она пытается сделать в данный момент.
 
-**Why this matters for agents:**
+**Почему это важно для агентов:**
 
-- **Put important information where the model can find it.** Models tend to pay more attention to the beginning and end of the context. Critical instructions should go in the system prompt (beginning) or close to the user's query (end).
-- **Be specific and clear.** Vague instructions force the model to guess what matters. Specific instructions make it easy for the attention mechanism to latch onto the right information.
-- **Structure helps.** Clear headers, numbered lists, and consistent formatting help the model parse and attend to the right content.
+- **Размещайте важную информацию там, где модель может её найти.** Модели, как правило, уделяют больше внимания началу и концу контекста. Важные инструкции следует размещать в системном запросе (в начале) или рядом с запросом пользователя (в конце).
+
+- **Будьте конкретны и ясны.** Расплывчатые инструкции заставляют модель гадать, что важно. Конкретные инструкции облегчают механизму внимания захват нужной информации.
+
+- **Структура помогает.** Четкие заголовки, нумерованные списки и согласованное форматирование помогают модели анализировать и обрабатывать правильный контент.
+
+--
+
+## Стратегии рассуждения
+
+То, как агент «думает» о проблеме, во многом зависит от того, как вы задаете модели вопросы. Различные стратегии рассуждения дают совершенно разные результаты, особенно для сложных задач.
+
+### Метод «цепочки рассуждений» (CoT)
+
+**Что это:** Побуждение модели к пошаговому анализу проблемы перед предоставлением окончательного ответа.
+
+**Как это работает:** Вместо того чтобы сразу переходить к ответу, модель генерирует промежуточные этапы рассуждений. Это значительно повышает точность в задачах, требующих логики, математики или многоэтапного анализа.
+
+**Пример без CoT:**
+```
+Задание: «Если сервер обрабатывает 100 запросов в секунду, и у нас есть 3 сервера,
+при этом 40% трафика приходится на сервер 1, сколько запросов в секунду
+обрабатывает сервер 1?»
+
+Ответ модели: "120 запросов в секунду" (неверно)
+```
+
+**Пример с CoT:**
+```
+Задание: "Подумайте шаг за шагом. Если сервер обрабатывает 100 запросов в секунду, и
+у нас есть 3 сервера, при этом 40% трафика приходится на сервер 1, сколько
+запросов в секунду обрабатывает сервер 1?"
+
+Ответ модели:
+"Шаг 1: Общая пропускная способность составляет 3 сервера x 100 запросов/с = 300 запросов/с
+Шаг 2: Сервер 1 получает 40% от общего трафика
+Шаг 3: 40% от 300 = 120 запросов/с
+Шаг 4: Сервер 1 может обрабатывать 100 запросов/с, но получает 120 запросов/с
+Ответ: Сервер 1 получает 120 запросов/с, но может обрабатывать только 100 запросов/с,
+следовательно, он перегружен на 20 запросов/с"
+""
+
+Пошаговый подход выявил условие перегрузки, которое не было обнаружено в прямом ответе.
+
+"" **Когда использовать дерево мыслей (CoT) для агентов:**
+- Принятие сложных решений по выбору инструмента («Учитывая эти 5 инструментов, какой из них поможет в данном случае?»)
+- Многоэтапное планирование («Какая последовательность действий позволит достичь этой цели?»)
+- Диагностика ошибок («Инструмент вернул ошибку — что пошло не так и что мне следует попробовать дальше?»)
+
+### Дерево мыслей (ToT)
+
+**Что это:** Расширение дерева мыслей, в котором модель исследует несколько путей рассуждений, оценивает их и выбирает лучший.
+
+**Как это работает:** Вместо одной цепочки рассуждений модель генерирует несколько возможных подходов, оценивает или критикует каждый из них и переходит к наиболее перспективному пути.
+
+
+```
+Цель: «Оптимизировать этот медленный запрос к базе данных»
+
+Путь A: «Добавить индекс по столбцу в предложении WHERE»
+
+- Оценка: «Вероятно, эффективно, низкий риск, легко реализовать»
+
+Путь B: «Переписать как материализованное представление»
+- Оценка: «Может помочь, но добавляет сложности и требует обслуживания»
+
+Путь C: «Денормализовать структуру таблицы»
+- Оценка: «Может сработать, но высокий риск, влияет на другие запросы»
+
+Решение: Сначала перейти к пути A, если A недостаточно эффективен, попробовать путь B
+```
+
+**Когда использовать ToT для агентов:**
+- Когда существует несколько допустимых подходов, и вы хотите, чтобы модель учитывала компромиссы
+- Сложная отладка, где первопричина неясна
+- Архитектурные решения, требующие оценки альтернатив
+
+**Компромисс:** ToT использует больше токенов и занимает больше времени. Используйте его только для решений, где цена неправильного выбора высока.
+
+### Пошаговая декомпозиция
+
+**Что это:** Разбиение сложной цели на последовательность более простых подзадач перед выполнением каждой из них.
+
+**Как это работает:****Агент сначала создает план, а затем выполняет каждый шаг плана, проверяя ход выполнения.
+
+```
+Цель пользователя: «Настроить мониторинг для нашей новой конечной точки API»
+
+План:
+1. Проверить, какие инструменты мониторинга в настоящее время настроены
+2. Определить, какие метрики важны для этой конечной точки (задержка, частота ошибок, пропускная способность)
+3. Создать панель мониторинга
+4. Настроить пороговые значения для оповещений
+5. Проверить корректность срабатывания оповещений
+6. Задокументировать настройку мониторинга
+
+Выполнение: [выполняется шаг за шагом, при этом на каждом шаге могут использоваться инструменты]
+```
+
+**Когда использовать декомпозицию для агентов:**
+- Многошаговые задачи, где порядок имеет значение
+- Задачи, где вы хотите, чтобы агент был прозрачен в отношении своего подхода
+- Сложные рабочие процессы, которые выигрывают от контрольных точек
 
 ---
 
-## Reasoning strategies
+## Выбор модели: выбор правильной модели для задачи
 
-How an agent "thinks" about a problem depends heavily on how you prompt the model. Different reasoning strategies produce very different results, especially for complex tasks.
+Не для всех задач нужна самая мощная модель. Выбор правильной модели — это инженерное решение, которое уравновешивает возможности, стоимость, скорость и надежность.
 
-### Chain-of-Thought (CoT)
-
-**What it is:** Prompting the model to think through a problem step by step before giving a final answer.
-
-**How it works:** Instead of jumping straight to an answer, the model generates intermediate reasoning steps. This dramatically improves accuracy on tasks that require logic, math, or multi-step analysis.
-
-**Example without CoT:**
-```
-Prompt: "If a server handles 100 requests/second and we have 3 servers,
-         with 40% of traffic going to server 1, how many requests/second
-         does server 1 handle?"
-
-Model response: "120 requests per second"  (wrong)
-```
-
-**Example with CoT:**
-```
-Prompt: "Think step by step. If a server handles 100 requests/second and
-         we have 3 servers, with 40% of traffic going to server 1, how
-         many requests/second does server 1 handle?"
-
-Model response:
-"Step 1: Total capacity is 3 servers x 100 req/s = 300 req/s
- Step 2: Server 1 receives 40% of total traffic
- Step 3: 40% of 300 = 120 req/s
- Step 4: Server 1 can handle 100 req/s but receives 120 req/s
- Answer: Server 1 receives 120 req/s but can only handle 100 req/s,
-         so it is overloaded by 20 req/s"
-```
-
-The step-by-step approach caught the overload condition that the direct answer missed.
-
-**When to use CoT for agents:**
-- Complex tool selection decisions ("Given these 5 tools, which one helps here?")
-- Multi-step planning ("What sequence of actions achieves this goal?")
-- Error diagnosis ("The tool returned an error - what went wrong and what should I try next?")
-
-### Tree-of-Thoughts (ToT)
-
-**What it is:** An extension of Chain-of-Thought where the model explores multiple reasoning paths, evaluates them, and picks the best one.
-
-**How it works:** Instead of one chain of reasoning, the model generates several possible approaches, scores or critiques each one, and proceeds with the most promising path.
+### Модельный спектр
 
 ```
-Goal: "Optimize this slow database query"
-
-Path A: "Add an index on the WHERE clause column"
-  -> Evaluation: "Likely effective, low risk, easy to implement"
-
-Path B: "Rewrite as a materialized view"
-  -> Evaluation: "Might help, but adds complexity and maintenance"
-
-Path C: "Denormalize the table structure"
-  -> Evaluation: "Could work but high risk, affects other queries"
-
-Decision: Proceed with Path A first, try Path B if A is insufficient
-```
-
-**When to use ToT for agents:**
-- When there are multiple valid approaches and you want the model to consider trade-offs
-- Complex debugging where the root cause is uncertain
-- Architecture decisions that require evaluating alternatives
-
-**Trade-off:** ToT uses more tokens and takes more time. Reserve it for decisions where the cost of choosing wrong is high.
-
-### Step-by-Step Decomposition
-
-**What it is:** Breaking a complex goal into a sequence of simpler subtasks before executing any of them.
-
-**How it works:** The agent first creates a plan, then executes each step of the plan, checking progress along the way.
-
-```
-User goal: "Set up monitoring for our new API endpoint"
-
-Plan:
-1. Check what monitoring tools are currently configured
-2. Determine what metrics matter for this endpoint (latency, error rate, throughput)
-3. Create the monitoring dashboard
-4. Set up alerting thresholds
-5. Test that alerts fire correctly
-6. Document the monitoring setup
-
-Execution: [proceeds step by step, with each step potentially using tools]
-```
-
-**When to use decomposition for agents:**
-- Multi-step tasks where the order matters
-- Tasks where you want the agent to be transparent about its approach
-- Complex workflows that benefit from checkpoints
-
----
-
-## Model selection: picking the right model for the job
-
-Not all tasks need the most powerful model. Choosing the right model is an engineering decision that balances capability, cost, speed, and reliability.
-
-### The model spectrum
-
-```
-Lighter / Faster / Cheaper                  Heavier / Smarter / More Expensive
+Легче / Быстрее / Дешевле Тяжелее / Умнее / Дороже
 |----------------------------------------------------------|
-Gemini Flash          Gemini Pro          Gemini 2.5 Pro
-(simple tasks)        (balanced)          (complex reasoning)
+Gemini Flash Gemini Pro Gemini 2.5 Pro
+(простые задачи) (сбалансированные) (сложные рассуждения)
 ```
 
-### When to use what
+### Когда что использовать
 
-| Task Type | Recommended Tier | Why |
+| Тип задачи | Рекомендуемый уровень | Почему |
+
 |---|---|---|
-| Classification ("Is this spam?") | Light (Flash) | Simple decision, no complex reasoning needed |
-| Data extraction ("Pull the date from this email") | Light (Flash) | Pattern matching, well-defined output |
-| Summarization | Light to Medium | Depends on length and complexity of source |
-| Multi-step reasoning | Medium to Heavy (Pro) | Requires sustained logical chains |
-| Complex code generation | Heavy (2.5 Pro) | Needs deep understanding of patterns and edge cases |
-| Agentic tool use | Medium to Heavy | Tool selection and result interpretation need strong reasoning |
-| Creative writing | Medium | Good results without the heaviest models |
 
-### Model routing: using different models for different steps
+| Классификация ("Это спам?") | Легкая (Flash) | Простое решение, не требует сложных рассуждений |
 
-A sophisticated agent system does not use the same model for every step. This is called **model routing** - directing different parts of the workflow to different models based on complexity.
+| Извлечение данных ("Извлечь дату из этого письма") | Легкая (Flash) | Сопоставление шаблонов, четко определенный результат |
 
-**Example architecture:**
+| Резюмирование | Легкая до средней | Зависит от длины и сложности исходного текста |
 
-```
-User query arrives
-    |
-    v
-[Light model: Classify intent]  --> "order_status"
-    |
-    v
-[Light model: Extract parameters]  --> order_id: 12345
-    |
-    v
-[Tool call: Look up order]  --> status data
-    |
-    v
-[Light model: Format response]  --> "Your order #12345 shipped on March 15"
-```
+| Многошаговое рассуждение | Средняя до сложной (Pro) | Требует устойчивых логических цепочек |
 
-In this flow, every step uses a fast, cheap model because none of the individual steps require heavy reasoning. The total cost and latency are much lower than using a frontier model for the entire interaction.
+| Сложная генерация кода | Сложная (2.5 Pro) | Требует глубокого понимания шаблонов и граничных случаев |
 
-**Compare with a harder task:**
+| Использование агентных инструментов | Средняя до сложной | Выбор инструмента и интерпретация результатов требуют веских рассуждений |
+
+| Творческое письмо | Средняя | Хорошие результаты без самых сложных моделей |
+
+### Маршрутизация моделей: использование разных моделей для разных шагов
+
+Сложная агентная система не использует одну и ту же модель на каждом шаге. Это называется **маршрутизацией моделей** — направление различных частей рабочего процесса к различным моделям в зависимости от сложности.
+
+**Пример архитектуры:**
 
 ```
-User: "Review this pull request and suggest improvements"
-    |
-    v
-[Heavy model: Analyze code changes, reason about patterns,
- identify bugs, suggest improvements]
-    |
-    v
-[Return detailed review]
+Поступает запрос пользователя
+
+|
+
+v
+[Простая модель: Классификация намерений] --> "order_status"
+
+|
+
+v
+[Простая модель: Извлечение параметров] --> order_id: 12345
+
+|
+
+v
+[Вызов инструмента: Поиск заказа] --> данные о статусе
+
+|
+
+v
+[Простая модель: Форматирование ответа] --> "Ваш заказ № 12345 отправлен 15 марта"
 ```
 
-This task needs deep reasoning, so it warrants a more capable model.
+В этом потоке каждый шаг использует быструю и недорогую модель, поскольку ни один из отдельных шагов не требует сложных рассуждений. Общая стоимость и задержка намного ниже, чем при использовании модели Frontier для всего взаимодействия.
 
-### Google Cloud Model options
+**Сравнение со сложной задачей:**
 
-Google Cloud provides access to Gemini models through Vertex AI:
+```
+Пользователь: "Просмотрите этот запрос на слияние и предложите улучшения"
 
-- **Gemini 2.0 Flash** - Fast and efficient for most agent tasks. Large context window (1M tokens). Good balance of capability and speed.
-- **Gemini 2.5 Pro** - Top-tier reasoning for complex tasks. Use when the task requires deep analysis, complex multi-step logic, or nuanced understanding.
-- **Gemini 2.0 Flash Lite** - Fastest and cheapest option for simple tasks like classification and extraction.
+|
 
-> **Learn more:** [Vertex AI Model Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+v
+[Продвинутая модель: анализ изменений кода, выявление закономерностей,
+выявление ошибок, предложение улучшений]
 
-> **Learn more:** [Gemini API Documentation](https://ai.google.dev/gemini-api/docs)
+|
+
+v
+[Вернуть подробный обзор]
+```
+
+Эта задача требует глубокого анализа, поэтому она заслуживает более мощной модели.
+
+### Варианты моделей Google Cloud
+
+Google Cloud предоставляет доступ к моделям Gemini через Vertex AI:
+
+- **Gemini 2.0 Flash** - Быстрая и эффективная для большинства задач агентов. Большое контекстное окно (1 млн токенов). Хороший баланс возможностей и скорости.
+
+- **Gemini 2.5 Pro** - Первоклассный анализ для сложных задач. Используйте, когда задача требует глубокого анализа, сложной многошаговой логики или тонкого понимания.
+
+- **Gemini 2.0 Flash Lite** - Самый быстрый и дешевый вариант для простых задач, таких как классификация и извлечение.
+
+> **Подробнее:** [Документация по модели Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+
+> **Подробнее:** [Документация по API Gemini](https://ai.google.dev/gemini-api/docs)
 
 ---
 
-## The role of system instructions
+## Роль системных инструкций
 
-System instructions are the agent's "job description." They tell the model who it is, what it can do, how it should behave, and what it should not do.
+Системные инструкции — это «описание задач» агента. Они сообщают модели, кто она, что она может делать, как она должна себя вести и чего она не должна делать.
 
-### What goes in system instructions
+### Что должно быть в системных инструкциях
 
-A well-written system instruction for an agent typically includes:
+Хорошо составленная системная инструкция для агента обычно включает в себя:
 
-1. **Role definition**: What the agent is and who it serves
-2. **Capabilities**: What tools are available and when to use them
-3. **Constraints**: What the agent should not do
-4. **Output format**: How to structure responses
-5. **Error handling**: What to do when things go wrong
-6. **Personality/tone**: How to communicate (if relevant)
+1. **Определение роли**: Кто является агентом и кому он служит
+2. **Возможности**: Какие инструменты доступны и когда их использовать
+3. **Ограничения**: Что агент не должен делать
+4. **Формат вывода**: Как структурировать ответы
+5. **Обработка ошибок**: Что делать, когда что-то идет не так
+6. **Личность/тон**: Как общаться (если применимо)
 
-### Example: customer support agent
+### Пример: агент службы поддержки клиентов
 
 ```
-You are a customer support agent for Acme Corp, an online electronics retailer.
+Вы — агент службы поддержки клиентов компании Acme Corp, онлайн-ритейлера электроники.
 
-Your role:
-- Help customers with order inquiries, returns, and product questions
-- Be friendly, professional, and concise
+Ваша роль:
+- Помощь клиентам с вопросами по заказам, возвратам и товарам
+- Будьте дружелюбны, профессиональны и лаконичны
 
-Available tools:
-- lookup_order(order_id): Returns order status, items, and shipping info
-- initiate_return(order_id, reason): Starts a return process
-- search_products(query): Searches the product catalog
-- escalate_to_human(reason): Transfers to a human agent
+Доступные инструменты:
+- lookup_order(order_id): Возвращает статус заказа, товары и информацию о доставке
+- initiate_return(order_id, reason): Запускает процесс возврата
+- search_products(query): Выполняет поиск в каталоге товаров
+- escalate_to_human(reason): Перенаправляет запрос оператору
 
-Guidelines:
-- Always verify the customer's identity before accessing order information
-- If you cannot resolve an issue in 3 attempts, escalate to a human agent
-- Never make up order information - always use the lookup tool
-- Do not offer discounts or refunds beyond standard policy
-- Keep responses under 3 paragraphs
+Рекомендации:
+- Всегда проверяйте личность клиента перед доступом к информации о заказе
+- Если вы не можете решить проблему за 3 попытки, передайте запрос оператору
+- Никогда не выдумывайте информацию о заказе — всегда используйте инструмент поиска
+- Не предлагайте скидки или возвраты, выходящие за рамки стандартной политики
+- Ответы должны быть не более 3 абзацев
 
-When you encounter an error from a tool:
-- If it is a temporary error (timeout, 500), retry once
-- If it is a permanent error (not found, unauthorized), explain the issue to the customer
-- If you are unsure, escalate to a human agent
-```
+При возникновении ошибки в инструменте:
+- Если это временная ошибка (тайм-аут, 500), повторите попытку
+- Если это постоянная ошибка (не найдено, несанкционированный доступ), объясните проблему клиенту
+- Если вы Если вы не уверены, обратитесь к оператору-человеку.
 
-### Tips for writing effective system instructions
+### Советы по написанию эффективных системных инструкций
 
-| Do | Do Not |
+| Что нужно делать | Чего не нужно делать |
+
 |---|---|
-| Be specific about tool usage | Leave tool selection ambiguous |
-| Define clear boundaries | Assume the model knows your business rules |
-| Include error handling guidance | Hope the model figures out errors on its own |
-| Specify output format | Let the model choose its own format each time |
-| Use concrete examples | Write abstract, vague instructions |
-| Keep instructions concise | Write a 10-page essay (wastes context) |
 
-### Ordering matters
+| Будьте конкретны в использовании инструментов | Оставляйте выбор инструмента неоднозначным |
 
-Models pay more attention to instructions at the beginning and end of the system prompt. Structure your system instructions like this:
+| Определите четкие границы | Предположите, что модель знает ваши бизнес-правила |
+
+| Включите рекомендации по обработке ошибок | Надейтесь, что модель сама обнаружит ошибки |
+
+| Укажите формат вывода | Позвольте модели каждый раз выбирать свой собственный формат |
+
+| Используйте конкретные примеры | Пишите абстрактные, расплывчатые инструкции |
+| Инструкции должны быть краткими | Напишите эссе на 10 страниц (это тратит впустую контекст) |
+
+### Порядок имеет значение
+
+Модели уделяют больше внимания инструкциям в начале и конце системного запроса. Структурируйте ваши системные инструкции следующим образом:
 
 ```
-1. Most critical rules (identity, safety constraints)     <-- Start
-2. Tool usage guidelines
-3. Output format
-4. Examples
-5. Edge case handling
-6. Reminder of most critical rules                        <-- End
+1. Наиболее важные правила (идентичность, ограничения безопасности) <-- Начало
+2. Рекомендации по использованию инструмента
+3. Формат вывода
+4. Примеры
+5. Обработка граничных случаев
+6. Напоминание о наиболее важных правилах <-- Конец
 ```
 
-This takes advantage of the "primacy and recency" effects in attention.
+Это использует преимущества эффектов «первичности и недавности» в механизме внимания.
 
 ---
 
-## Temperature, sampling, and agent behavior
+## Температура, выборка и поведение агента
 
-When a language model generates text, it does not just pick the single most likely next token. It samples from a probability distribution over all possible tokens. The parameters that control this sampling have a big impact on agent behavior.
+Когда языковая модель генерирует текст, она не просто выбирает один наиболее вероятный следующий токен. Она выбирает токен из вероятностного распределения по всем возможным токенам. Параметры, управляющие этой выборкой, оказывают большое влияние на поведение агента.
 
-### Temperature
+### Температура
 
-**Temperature** controls how random the model's outputs are.
+**Температура** контролирует, насколько случайны выходные данные модели.
 
-- **Temperature 0 (or very low)**: The model almost always picks the most likely token. Outputs are deterministic and focused.
-- **Temperature 1**: The model samples proportionally to token probabilities. Outputs are more varied and creative.
-- **Temperature > 1**: The model becomes increasingly random. Outputs become unpredictable.
+- **Температура 0 (или очень низкая)**: Модель почти всегда выбирает наиболее вероятный токен. Результаты детерминированы и сфокусированы.
 
-**Visual analogy:**
+- **Температура 1**: Модель выбирает значения пропорционально вероятностям токенов. Результаты более разнообразны и креативны.
+
+- **Температура > 1**: Модель становится все более случайной. Результаты становятся непредсказуемыми.
+
+**Визуальная аналогия:**
 
 ```
-Temperature 0:    "The capital of France is Paris."
-                  (Always the same answer)
+Температура 0: «Столица Франции — Париж».
 
-Temperature 0.7:  "The capital of France is Paris, a city known for..."
-                  (Slight variation in elaboration)
+(Всегда один и тот же ответ)
 
-Temperature 1.5:  "The capital of France is historically rooted in..."
-                  (More creative, potentially off-track)
+Температура 0,7: «Столица Франции — Париж, город, известный тем, что…»
+
+(Небольшие вариации в уточнении)
+
+Температура 1,5: «Столица Франции исторически связана с…»
+
+(Более креативно, возможно, отклоняется от темы)
 ```
 
-### What temperature to use for agents
+### Какую температуру использовать для агентов
 
-| Agent Task | Recommended Temperature | Why |
+| Задача агента | Рекомендуемая температура | Почему |
+
 |---|---|---|
-| Tool selection | 0 - 0.2 | You want deterministic, correct tool calls |
-| Data extraction | 0 | Exact answers, no creativity needed |
-| Code generation | 0 - 0.3 | Correctness matters more than variety |
-| Planning | 0.2 - 0.5 | Some flexibility helps explore options |
-| Creative writing | 0.7 - 1.0 | Variety and originality are valued |
-| Brainstorming | 0.8 - 1.0 | Want diverse ideas |
 
-**For most agent use cases, keep temperature low (0 to 0.3).** Agents need to make reliable decisions about tool use, parameter extraction, and reasoning. High temperature introduces randomness where you want consistency.
+| Выбор инструмента | 0 - 0,2 | Вам нужны детерминированные, корректные вызовы инструментов |
 
-### Top-K and Top-P Sampling
+| Извлечение данных | 0 | Точные ответы, креативность не требуется |
 
-These are additional controls on how the model selects tokens.
+| Генерация кода | 0 - 0,3 | Корректность важнее разнообразия |
 
-**Top-K:** Only consider the K most likely tokens. If K=50, the model ignores every token outside the top 50 candidates.
+| Планирование | 0,2 - 0,5 | Некоторая гибкость помогает изучить варианты |
 
-**Top-P (nucleus sampling):** Only consider tokens whose cumulative probability reaches P. If P=0.9, the model considers the smallest set of tokens that together have a 90% probability.
+| Творческое письмо | 0,7 - 1,0 | Разнообразие и оригинальность ценятся |
 
-```
-Token probabilities: [0.4, 0.25, 0.15, 0.08, 0.05, 0.03, 0.02, ...]
+| Мозговой штурм | 0,8 - 1,0 | Нужны разнообразные идеи |
 
-Top-K=3:  Consider only [0.4, 0.25, 0.15]
-Top-P=0.8: Consider only [0.4, 0.25, 0.15] (cumulative = 0.8)
-Top-P=0.9: Consider only [0.4, 0.25, 0.15, 0.08] (cumulative = 0.88... round up)
-```
+**Для большинства сценариев использования агентов поддерживайте низкую температуру (от 0 до 0,3).** Агенты должны принимать надежные решения об использовании инструментов, извлечении параметров и рассуждениях. Высокая температура вносит случайность там, где нужна согласованность.
 
-**For agents:** Use conservative settings. Top-P around 0.9 and moderate Top-K values are reasonable defaults. The model's default settings are usually fine for agent work - temperature is the parameter you are most likely to want to adjust.
+### Выборка Top-K и Top-P
 
-### How sampling affects the agent loop
+Это дополнительные параметры, определяющие способ выбора токенов моделью.
 
-Consider an agent that needs to decide which tool to call. With low temperature, it will consistently pick the same (usually correct) tool for a given situation. With high temperature, it might pick different tools on different runs, leading to inconsistent behavior.
+**Top-K:** Рассматриваются только K наиболее вероятных токенов. Если K=50, модель игнорирует все токены, кроме 50 лучших кандидатов.
+
+**Top-P (ядерная выборка):** Рассматриваются только токены, кумулятивная вероятность которых достигает P. Если P=0,9, модель рассматривает наименьший набор токенов, которые вместе имеют вероятность 90%.
 
 ```
-User: "What is the weather in Tokyo?"
+Вероятности токенов: [0.4, 0.25, 0.15, 0.08, 0.05, 0.03, 0.02, ...]
 
-Low temperature (0):
-  -> Agent thinks: "I need the weather tool"
-  -> Calls: get_weather(city="Tokyo")
-  -> Consistent, predictable
-
-High temperature (1.2):
-  -> Run 1: Calls get_weather(city="Tokyo")
-  -> Run 2: Calls web_search("Tokyo weather forecast")
-  -> Run 3: Tries to answer from training data (no tool call)
-  -> Inconsistent, hard to debug
+Top-K=3: Рассматривать только [0.4, 0.25, 0.15]
+Top-P=0.8: Рассматривать только [0.4, 0.25, 0.15] (суммарно = 0.8)
+Top-P=0.9: Рассматривать только [0.4, 0.25, 0.15, 0.08] (суммарно = 0.88... округлить в большую сторону)
 ```
 
-For production agents, deterministic behavior is almost always what you want.
+**Для агентов:** Используйте консервативные настройки. Значения Top-P около 0.9 и умеренные значения Top-K являются разумными значениями по умолчанию. Настройки модели по умолчанию обычно подходят для работы с агентами — температура — это параметр, который вам, скорее всего, захочется скорректировать.
+
+### Как выборка влияет на цикл работы агента
+
+Рассмотрим агента, которому нужно решить, какой инструмент вызвать. При низкой температуре он будет постоянно выбирать один и тот же (обычно правильный) инструмент для данной ситуации. При высокой температуре он может выбирать разные инструменты в разных запусках, что приводит к непоследовательному поведению.
+
+```
+Пользователь: "Какая погода в Токио?"
+
+Низкая температура (0):
+
+-- Агент думает: "Мне нужен инструмент погоды"
+-- Вызывает: get_weather(city="Tokyo")
+-- Последовательное, предсказуемое поведение
+
+Высокая температура (1.2):
+
+-- Запуск 1: Вызывает get_weather(city="Tokyo")
+-- Запуск 2: Вызывает web_search("Прогноз погоды в Токио")
+-- Запуск 3: Пытается ответить на основе обучающих данных (без вызова инструмента)
+-- Непоследовательное, сложно отлаживать
+```
+
+Для агентов в производственной среде детерминированное поведение почти всегда является желаемым.
 
 ---
 
-## ELI5: how the LLM brain works
+## Простое объяснение: как работает мозг LLM
 
-### Think of the LLM like a chef
+### Представьте себе LLM как шеф-повара
 
-Imagine you are running a restaurant kitchen, and the LLM is your head chef.
+Представьте, что вы управляете кухней ресторана, а LLM — ваш шеф-повар.
 
-**The chef's training (model training):**
-The chef has spent years studying thousands of cookbooks, watching cooking shows, and practicing recipes. They have not memorized every recipe word for word, but they have developed deep intuitions about what flavors go together, what techniques work for what ingredients, and how to improvise when something is missing.
+**Обучение шеф-повара (модель обучения):**
+Шеф-повар годами изучал тысячи кулинарных книг, смотрел кулинарные шоу и практиковался в приготовлении блюд. Он не запомнил каждый рецепт слово в слово, но у него развилась глубокая интуиция относительно того, какие вкусы сочетаются, какие техники работают с какими ингредиентами и как импровизировать, когда чего-то не хватает.
 
-**Tokens are like ingredients:**
-The chef does not think in terms of complete dishes all at once. They think in terms of individual ingredients and steps. "First the onion, then the garlic, then the tomatoes..." Each ingredient choice informs the next one. That is how token prediction works - each token is chosen based on all the tokens before it.
+**Токены похожи на ингредиенты:**
+Шеф-повар не думает о готовых блюдах сразу. Он думает об отдельных ингредиентах и ​​этапах приготовления. «Сначала лук, потом чеснок, потом помидоры…» Выбор каждого ингредиента влияет на следующий. Так работает предсказание токенов — каждый токен выбирается на основе всех токенов, которые были до него.
 
-**The context window is like the counter space:**
-The chef can only work with what fits on the kitchen counter. If the counter is huge (1 million tokens), they can have lots of ingredients, recipes, and prep work visible at once. If the counter is small, they have to put things away to make room, and might forget what they were doing.
 
-**Temperature is like the chef's mood:**
-- Low temperature: The chef is focused and methodical. They follow the recipe exactly. Every time you order the same dish, it tastes the same.
-- High temperature: The chef is feeling creative. They improvise, substitute ingredients, try new things. Sometimes the result is amazing, sometimes it is weird.
+**Контекстное окно похоже на рабочее пространство на столешнице:**
+Шеф-повар может работать только с тем, что помещается на кухонной столешнице. Если столешница огромная (1 миллион токенов), он может одновременно видеть множество ингредиентов, рецептов и подготовительных работ. Если столешница маленькая, ему приходится убирать вещи, чтобы освободить место, и он может забыть, что делал.
 
-**System instructions are like the restaurant concept:**
-"You are a French bistro. You use traditional techniques. You do not serve sushi." This shapes every decision the chef makes without having to be repeated for each dish.
+**Температура похожа на настроение шеф-повара:**
+- Низкая температура: Шеф-повар сосредоточен и методичен. Он точно следует рецепту. Каждый раз, когда вы заказываете одно и то же блюдо, оно имеет одинаковый вкус.
 
-**Tools are like kitchen equipment:**
-The chef's knowledge alone does not cook food. They need an oven, a stove, knives, and measuring tools. Similarly, the LLM's reasoning alone does not look up data or call APIs. It needs tools.
+- Высокая температура: Шеф-повар чувствует себя творчески. Он импровизирует, заменяет ингредиенты, пробует что-то новое. Иногда результат потрясающий, иногда странный.
 
-**The agent loop is like a cooking show challenge:**
-The chef gets a challenge ("Make a three-course meal for someone who is gluten-free"). They plan their approach, start cooking, taste as they go, adjust seasoning, plate the food, and evaluate the result. If the sauce breaks, they troubleshoot and adapt. That plan-act-observe-adjust loop is exactly what an agent does.
+**Системные инструкции похожи на концепцию ресторана:**
+«Вы — французское бистро. Вы используете традиционные методы. Вы не подаете суши». Это формирует каждое решение шеф-повара, и его не нужно повторять для каждого блюда.
 
----
+**Инструменты похожи на кухонное оборудование:**
+Одних знаний шеф-повара недостаточно для приготовления пищи. Им нужны духовка, плита, ножи и измерительные инструменты. Аналогично, рассуждения LLM сами по себе не предполагают поиска данных или вызова API. Им нужны инструменты.
 
-## Putting it together: how model choice affects agent quality
+**Цикл работы агента похож на кулинарное шоу:**
+Шеф-повар получает задание («Приготовьте обед из трех блюд для человека, соблюдающего безглютеновую диету»). Он планирует свой подход, начинает готовить, пробует блюда по ходу дела, корректирует приправы, сервирует еду и оценивает результат. Если что-то не получается, он устраняет неполадки и адаптируется.Цикл «планирование-действие-наблюдение-корректировка» — это именно то, что делает агент.
 
-Here is a practical example of how these concepts combine in a real agent scenario.
+--
 
-### Scenario: a bug triage agent
+## Объединение: как выбор модели влияет на качество работы агента
 
-Your team wants an agent that reads new bug reports, categorizes them by severity, assigns them to the right team, and drafts an initial investigation plan.
+Вот практический пример того, как эти концепции объединяются в реальном сценарии работы агента.
 
-**Model selection decision:**
+### Сценарий: агент для сортировки ошибок
 
-| Step | Model Choice | Reasoning |
+Ваша команда хочет, чтобы агент читал новые сообщения об ошибках, классифицировал их по степени серьезности, назначал их нужной команде и составлял первоначальный план расследования.
+
+**Решение о выборе модели:**
+
+| Шаг | Выбор модели | Обоснование |
+
+|---|---|
+
+| Классификация серьезности (P0-P3) | Flash (легкая) | Простая классификация с четкими критериями |
+
+| Назначение команде | Flash (легкая) | Решение в стиле поиска на основе компонента |
+
+| Составление плана расследования | Pro (сложная) | Требует понимания ошибки, связанных систем и предложения диагностических шагов |
+
+**Решения по температуре:**
+
+| Шаг | Температура | Обоснование |
+
 |---|---|---|
-| Classify severity (P0-P3) | Flash (light) | Simple classification with clear criteria |
-| Assign to team | Flash (light) | Lookup-style decision based on component |
-| Draft investigation plan | Pro (heavy) | Requires understanding the bug, related systems, and suggesting diagnostic steps |
 
-**Temperature decisions:**
+| Классификация серьезности | 0 | Должно быть детерминированным - одна и та же ошибка всегда должна получать одинаковую серьезность |
 
-| Step | Temperature | Reasoning |
-|---|---|---|
-| Classify severity | 0 | Must be deterministic - same bug should always get the same severity |
-| Assign to team | 0 | Must be consistent - same component should always route to the same team |
-| Draft investigation plan | 0.3 | Slight flexibility helps generate more useful and varied investigation ideas |
+| Назначение команде | 0 | Должно быть согласованным - один и тот же компонент всегда должен направляться одной и той же команде |
 
-**System instruction excerpt:**
+| Разработка плана расследования | 0.3 | Небольшая гибкость помогает генерировать более полезные и разнообразные идеи для расследования |
+
+**Выдержка из системной инструкции:**
 
 ```
-You are a bug triage agent for the Platform Engineering team.
+Вы являетесь агентом по сортировке ошибок в команде разработки платформы.
 
-Severity classification:
-- P0: Service is down or data loss is occurring
-- P1: Major feature is broken, no workaround
-- P2: Feature is impaired but a workaround exists
-- P3: Minor issue, cosmetic, or improvement request
+Классификация серьезности:
+- P0: Сервис недоступен или происходит потеря данных
+- P1: Основная функция не работает, обходного пути нет
+- P2: Функция нарушена, но существует обходное решение
+- P3: Незначительная проблема, косметическая ошибка или запрос на улучшение
 
-Team routing:
-- Auth/login issues -> Identity team
-- API errors -> Platform team
-- UI issues -> Frontend team
-- Database/performance -> Infrastructure team
+Маршрутизация команд:
+- Проблемы с аутентификацией/входом в систему -> Команда идентификации
+- Ошибки API -> Команда платформы
+- Проблемы с пользовательским интерфейсом -> Команда фронтенда
+- База данных/производительность -> Команда инфраструктуры
 
-When drafting an investigation plan:
-- Start with the most likely root cause
-- List 3-5 diagnostic steps in order of priority
-- Include relevant log queries or dashboard links
-- Note any recent deployments that might be related
+При составлении плана расследования:
+- Начните с наиболее вероятной первопричины
+- Перечислите 3-5 диагностических шагов в порядке приоритета
+- Включите соответствующие запросы журналов или ссылки на панели мониторинга
+- Отметьте любые недавние развертывания, которые могут быть связаны
 ```
 
-This example shows how understanding the model's capabilities, setting appropriate parameters, and writing clear instructions all contribute to a reliable agent.
+Этот пример показывает, как понимание возможностей модели, установка соответствующих параметров и написание четких инструкций способствуют созданию надежного агента.
 
 ---
 
-## Common mistakes when working with LLMs in agents
+## Распространенные ошибки при работе с LLM в агентах
 
-### 1. trusting the model for math
+### 1. Доверие модели к математическим вычислениям
 
-LLMs predict tokens, not compute equations. For any calculation that matters, use a code execution tool.
+LLM предсказывают токены, а не вычисляют уравнения. Для любых важных вычислений используйте инструмент выполнения кода.
 
 ```
-Bad:  "Calculate the total cost of 47 items at $23.99 each"
-      -> Model might say $1,127.53 (the correct answer is $1,127.53,
-         but it got lucky - it often gets these wrong)
+Плохо: «Рассчитать общую стоимость 47 товаров по 23,99 доллара каждый»
 
-Good: Have the agent call a calculator tool or code execution tool
-      -> calculate("47 * 23.99") -> $1,127.53 (guaranteed correct)
+- Модель может выдать 1127,53 доллара (правильный ответ — 1127,53 доллара,
+но ей повезло — она часто ошибается в таких случаях)
+
+Хорошо: Пусть агент вызовет калькулятор или инструмент выполнения кода
+
+-- calculate("47 * 23,99") -> 1127,53 доллара (гарантированно правильный ответ)
 ```
 
-### 2. assuming perfect memory
+### 2. Предположение об идеальной памяти
 
-The model only "remembers" what is in its current context window. If information from step 1 gets truncated by step 10, the model will not remember it.
+Модель «запоминает» только то, что находится в ее текущем контекстном окне. Если информация из шага 1 будет усечена к шагу 10, модель ее не запомнит.
 
-### 3. over-relying on a single model
+### 3. Чрезмерная зависимость от одной модели
 
-Using a frontier model for every step wastes money and adds latency. Use model routing to match model capability to task complexity.
+Использование модели границы для каждого шага приводит к нерациональному расходованию средств и увеличению задержки. Используйте маршрутизацию моделей, чтобы сопоставить возможности модели со сложностью задачи.
 
-### 4. ignoring the system prompt
+### 4. Игнорирование системных подсказок
 
-A well-crafted system prompt can be the difference between an agent that works 50% of the time and one that works 95% of the time. Invest time in writing and iterating on your system instructions.
+Хорошо составленная системная подсказка может стать решающим фактором между агентом, работающим в 50% случаев, и агентом, работающим в 95% случаев. Уделите время написанию и доработке системных инструкций.
 
-### 5. not accounting for hallucination
+### 5. Неучет галлюцинаций
 
-LLMs will confidently generate plausible but incorrect information. For any fact that matters, ground the agent's response in tool results rather than the model's training data.
+LLM-ы уверенно генерируют правдоподобную, но неверную информацию. Для любого важного факта основывайте ответ агента на результатах работы инструмента, а не на обучающих данных модели.
 
 ---
 
-## Key takeaways
+## Ключевые выводы
 
-1. **The LLM is the reasoning engine** of your agent. Understanding its capabilities and limitations is foundational to building good agents.
+1. **LLM — это механизм рассуждений** вашего агента. Понимание его возможностей и ограничений является основополагающим для создания хороших агентов.
 
-2. **Tokens, context windows, and attention** are the three key concepts. Tokens determine cost and speed. Context windows determine how much information the model can work with. Attention determines what the model focuses on.
+2. **Токены, контекстные окна и внимание** — три ключевых понятия. Токены определяют стоимость и скорость. Контекстные окна определяют, с каким объемом информации может работать модель. Внимание определяет, на чем фокусируется модель.
 
-3. **Reasoning strategies matter.** Chain-of-Thought, Tree-of-Thoughts, and step-by-step decomposition can dramatically improve agent performance on complex tasks.
 
-4. **Pick the right model for each step.** Use lighter models for simple tasks and heavier models for complex reasoning. Model routing reduces cost and latency.
+3. **Стратегии рассуждений имеют значение.** Методы «цепочки мыслей», «древа мыслей» и пошаговая декомпозиция могут значительно улучшить производительность агента при решении сложных задач.
 
-5. **System instructions are your main lever for controlling agent behavior.** Write them carefully, be specific, and iterate based on testing.
+4. **Выбирайте правильную модель для каждого шага.** Используйте более лёгкие модели для простых задач и более тяжёлые модели для сложных рассуждений. Маршрутизация моделей снижает затраты и задержку.
 
-6. **Keep temperature low for agents.** Deterministic behavior is almost always better for production agent systems.
+5. **Системные инструкции — ваш главный рычаг управления поведением агента.** Пишите их тщательно, будьте конкретны и совершенствуйте на основе тестирования.
+
+6. **Поддерживайте низкую температуру для агентов.** Детерминированное поведение почти всегда лучше для производственных систем с агентами.
 
 ---
 
-## What is next?
+## Что дальше?
 
-The brain is important, but an agent that can only think is just a chatbot. In the next lesson, we give our agent hands - tools that let it interact with the world, call APIs, search the web, and execute code.
+Мозг важен, но агент, который может только думать, — это всего лишь чат-бот. В следующем уроке мы дадим нашему агенту руки — инструменты, которые позволят ему взаимодействовать с миром, вызывать API, искать информацию в интернете и выполнять код.
 
-[Next: Lesson 3 - Tools: Giving Agents Hands -->](../03-tools-giving-agents-hands/README.md)
+
+[Далее: Урок 3 - Инструменты: Помощь агентам -->](../03-tools-giving-agents-hands/README.md)
