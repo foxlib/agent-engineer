@@ -1,35 +1,35 @@
-# Lesson 13: building your first agent with ADK
+# Урок 13: Создание первого агента с помощью ADK
 
-## Introduction
+## Введение
 
-You have made it through the fundamentals. You understand what agents are, how they think, how they use tools, how they remember things, and how to evaluate whether they are doing a good job. Now it is time to build one.
+Вы освоили основы. Вы понимаете, что такое агенты, как они мыслят, как используют инструменты, как запоминают информацию и как оценивать эффективность их работы. Теперь пришло время создать своего собственного.
 
-In this lesson, we will walk through building a practical agent using Google's Agent Development Kit (ADK). By the end, you will understand how to set up a project, define an agent, give it tools, test it locally, and even build a small team of agents that work together.
+В этом уроке мы шаг за шагом рассмотрим создание практического агента с использованием комплекта разработки агентов Google (ADK). К концу урока вы поймете, как настроить проект, определить агента, назначить ему инструменты, протестировать его локально и даже создать небольшую команду агентов, работающих вместе.
 
-We are going to keep this conceptual and link to the official quickstart for exact code samples - that way you always have up-to-date syntax, and we can focus on the ideas that matter.
+Мы будем придерживаться концептуального подхода и дадим ссылку на официальный краткий старт для получения точных примеров кода — таким образом, у вас всегда будет актуальный синтаксис, а мы сможем сосредоточиться на действительно важных идеях.
 
 ---
 
-## What we are building
+## Что мы строим
 
-Our goal is a practical agent that can:
+Наша цель — создать практичного агента, способного:
 
-- Answer questions about a topic using Google Search
-- Call a custom tool you define (like looking up weather or product info)
-- Run locally so you can test and iterate quickly
+- Отвечать на вопросы по теме с помощью поиска Google.
+- Использовать созданный вами инструмент (например, для поиска информации о погоде или товарах).
+- Запускать локально для быстрого тестирования и внесения изменений.
 
-Think of this as a "hello world" for agents - simple enough to understand in one sitting, but real enough to show how everything connects.
+Представьте это как "привет, мир" для агентов — достаточно простое, чтобы понять его с первого раза, но достаточно реалистичное, чтобы показать, как всё взаимосвязано.
 
-### Prerequisites
+### Предварительные требования
 
-Before you start, make sure you have:
+Прежде чем начать, убедитесь, что у вас есть:
 
-- **Python 3.9+** installed
-- **ADK installed** (`pip install google-adk`)
-- **A Google Cloud project** with the Gemini API enabled
-- **An API key** or application default credentials configured
+- Установлен **Python 3.9+**
+- Установлен **ADK** (`pip install google-adk`)
+- **Проект Google Cloud** с включенным API Gemini
+- **Ключ API** или настроенные учетные данные приложения по умолчанию
 
-> **Get set up:** Follow the official setup guide at [ADK Getting Started](https://google.github.io/adk-docs/get-started/) for detailed installation instructions.
+> **Настройка:** Подробные инструкции по установке см. в официальном руководстве по настройке [ADK Getting Started](https://google.github.io/adk-docs/get-started/).
 
 ---
 
