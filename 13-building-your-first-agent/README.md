@@ -33,23 +33,23 @@
 
 ---
 
-## ELI5: what are we actually doing?
+## ELI5: что мы на самом деле делаем?
 
-Building your first agent is like assembling a Lego kit. You have a baseplate (the project structure), a minifigure brain (the language model), some tool accessories (search, custom functions), and an instruction manual (system instructions) that tells the minifigure how to behave.
+Создание вашего первого агента похоже на сборку конструктора Lego. У вас есть базовая пластина (конструкция проекта), «мозг» минифигурки (языковая модель), несколько дополнительных инструментов (поиск, пользовательские функции) и инструкция по эксплуатации (системные инструкции), которая указывает минифигурке, как себя вести.
 
-Each piece snaps together in a specific way. The brain decides what to do. The tools let it do things. The instructions keep it focused. And the baseplate holds everything in place so it does not fall apart.
+Каждая деталь соединяется определенным образом. Мозг решает, что делать. Инструменты позволяют ему это делать. Инструкции помогают сосредоточиться. А опорная плита удерживает все на месте, чтобы конструкция не развалилась.
 
-The beautiful thing is that once you understand how the pieces fit, you can swap them out, add more, or rearrange them to build something completely different.
+Самое замечательное в том, что, как только вы поймете, как соединяются детали, вы сможете заменять их, добавлять новые или переставлять, чтобы построить совершенно другую конструкцию.
 
 ---
 
-## Step-by-Step Walkthrough
+## Пошаговое руководство
 
-Let us walk through the process of building your first agent. We will cover the concepts at each step and point you to the official quickstart for the exact code.
+Давайте рассмотрим процесс создания вашего первого агента. Мы обсудим основные понятия на каждом этапе и укажем на официальный краткий стартовый файл, где вы найдете точный код.
 
-### Step 1: set up the project structure
+### Шаг 1: Настройка структуры проекта
 
-ADK expects a specific project layout. At its simplest, you need a folder for your agent with two files inside:
+ADK ожидает определенную структуру проекта. В самом простом случае вам понадобится папка для вашего агента, внутри которой будут находиться два файла:
 
 ```
 my_first_agent/
@@ -57,21 +57,21 @@ my_first_agent/
     agent.py
 ```
 
-The folder name becomes your agent's module name. The `__init__.py` file tells Python this is a package and exports your agent. The `agent.py` file is where you define the agent itself.
+Имя папки становится именем модуля вашего агента. Файл `__init__.py` сообщает Python, что это пакет, и экспортирует ваш агент. В файле `agent.py` вы определяете самого агента.
 
-This structure matters because ADK tooling (like `adk web` and `adk eval`) discovers your agent by looking for this pattern. Keep it clean and consistent from the start.
+Эта структура важна, потому что инструменты ADK (например, `adk web` и `adk eval`) обнаруживают вашего агента, ища именно такой шаблон. С самого начала поддерживайте её в чистоте и единообразии.
 
-> **Tip:** You can also use `adk create my_first_agent` to scaffold this structure automatically.
+> **Совет:** Вы также можете использовать команду `adk create my_first_agent` для автоматического создания этой структуры.
 
-### Step 2: define your agent
+### Шаг 2: определите своего агента.
 
-Every ADK agent needs three things at minimum:
+Каждому агенту ADK необходимо как минимум три вещи:
 
-1. **A name** - A unique identifier for your agent
-2. **A model** - Which Gemini model to use for reasoning
-3. **System instructions** - The prompt that tells the agent who it is and how to behave
+1. **Имя** — уникальный идентификатор вашего агента.
+2. **Модель** — какую модель Gemini использовать для рассуждений.
+3. **Системные инструкции** — подсказка, которая сообщает агенту, кто он и как себя вести.
 
-Here is what this looks like conceptually:
+Вот как это выглядит концептуально:
 
 ```python
 from google.adk.agents import Agent
@@ -83,19 +83,19 @@ my_agent = Agent(
 )
 ```
 
-The `model` parameter determines which Gemini model handles the reasoning. For learning and prototyping, `gemini-2.5-flash` is a great choice - it is fast and cost-effective. For more complex reasoning tasks, you might upgrade to `gemini-2.5-pro`.
+Параметр `model` определяет, какая модель Gemini будет обрабатывать логические рассуждения. Для обучения и прототипирования отличным выбором станет `gemini-2.5-flash` — она быстрая и экономичная. Для более сложных задач логического рассуждения можно перейти на `gemini-2.5-pro`.
 
-The `instruction` parameter is your agent's system prompt. This is where you define its personality, capabilities, and boundaries. We will cover how to write good instructions later in this lesson.
+Параметр `instruction` — это системная подсказка вашего агента. Здесь вы определяете его характеристики, возможности и ограничения. Как писать качественные инструкции, мы рассмотрим позже в этом уроке.
 
-### Step 3: create a custom function tool
+### Шаг 3: создайте пользовательский инструмент функций.
 
-Tools are what separate an agent from a chatbot. Let us give our agent a custom function it can call.
+Инструменты — это то, что отличает оператора от чат-бота. Давайте назначим нашему оператору пользовательскую функцию, которую он сможет вызывать.
 
-A tool in ADK is simply a Python function with a clear docstring. The docstring matters because ADK uses it to tell the model what the tool does and when to use it.
+В ADK инструмент — это просто функция Python с понятной документацией. Документация важна, потому что ADK использует её, чтобы сообщить модели, что делает инструмент и когда его следует использовать.
 
 ```python
 def get_weather(city: str) -> dict:
-    """Get the current weather for a given city.
+    """Получите актуальную погоду для заданного города.
 
     Args:
         city: The name of the city to get weather for.
