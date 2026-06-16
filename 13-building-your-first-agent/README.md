@@ -103,8 +103,8 @@ def get_weather(city: str) -> dict:
     Returns:
         A dictionary with weather information.
     """
-    # In a real agent, this would call a weather API
-    # For now, return mock data
+    # В реальном агенте это бы вызвало API погоды
+    # Пока что возвращаем фиктивные данные
     return {
         "city": city,
         "temperature": "72F",
@@ -112,13 +112,13 @@ def get_weather(city: str) -> dict:
     }
 ```
 
-Key things to notice:
+Ключевые моменты, на которые следует обратить внимание:
 
-- **Type hints** (`city: str`, `-> dict`) help the model understand what parameters to pass and what to expect back
-- **The docstring** is how the model learns what this tool does - write it like you are explaining the function to a colleague
-- **The function name** should be descriptive - the model uses it to decide when to call the tool
+- **Type hints** (`city: str`, `-> dict`) помогите модели понять, какие параметры передавать и чего ожидать в ответ
+- **The docstring** так модель узнает, что делает этот инструмент — напишите его так, как будто вы объясняете функцию коллеге
+- **The function name** оно должен быть описательным — модель использует его, чтобы решить, когда вызывать инструмент
 
-You then attach the tool to your agent:
+Затем вы прикрепляете инструмент к своему агенту:
 
 ```python
 my_agent = Agent(
@@ -129,9 +129,9 @@ my_agent = Agent(
 )
 ```
 
-### Step 4: add a built-in tool (google search)
+### Шаг 4: добавьте встроенный инструмент (поиск Google)
 
-ADK comes with several built-in tools. One of the most useful is Google Search grounding, which lets your agent search the web for current information.
+ADK поставляется с несколькими встроенными инструментами. Один из самых полезных — это функция поиска Google, которая позволяет вашему агенту искать актуальную информацию в интернете.
 
 ```python
 from google.adk.tools import google_search
@@ -144,61 +144,61 @@ my_agent = Agent(
 )
 ```
 
-Now your agent can both search the web and check the weather. The model decides which tool to use based on the user's question. Ask about the news and it searches. Ask about the weather and it calls your custom function.
+Теперь ваш агент может одновременно искать информацию в интернете и проверять погоду. Модель выбирает инструмент в зависимости от вопроса пользователя. Спросите о новостях — и он выполнит поиск. Спросите о погоде — и он вызовет вашу пользовательскую функцию.
 
-### Step 5: run and test locally
+### Шаг 5: запуск и тестирование локально
 
-ADK includes a local development server that gives you a web UI to interact with your agent:
+ADK включает локальный сервер разработки, который предоставляет вам веб-интерфейс для взаимодействия с вашим агентом:
 
 ```bash
 adk web
 ```
 
-This starts a local server (typically at `http://localhost:8000`) with a chat interface. You can:
+Это запускает локальный сервер (обычно по адресу `http://localhost:8000`) с интерфейсом чата. Вы можете:
 
-- Send messages to your agent
-- See which tools it calls and why
-- Inspect the full conversation history
-- Debug issues in real time
+- Отправлять сообщения своему агенту
+- Видеть, какие инструменты он использует и почему
+- Просматривать полную историю переписки
+- Отлаживать проблемы в режиме реального времени
 
-You can also test from the command line:
+Вы также можете тестировать из командной строки:
 
 ```bash
 adk run my_first_agent
 ```
 
-This is your fastest feedback loop. Make a change, refresh, test. Repeat until the agent behaves the way you want.
+Это самый быстрый цикл обратной связи. Вносите изменения, обновляйте, тестируйте. Повторяйте, пока агент не начнет вести себя так, как вам нужно.
 
-### Step 6: evaluate with ADK eval`
+### Шаг 6: оценка с помощью ADK eval`
 
-Once your agent is working, you want to make sure it keeps working as you make changes. ADK includes an evaluation framework for this:
+Как только ваш агент заработает, вам нужно убедиться, что он продолжает работать при внесении изменений. ADK включает в себя фреймворк для оценки, предназначенный для этой цели:
 
 ```bash
 adk eval my_first_agent eval_data.json
 ```
 
-Evaluation lets you define test cases - pairs of inputs and expected behaviors - and automatically check whether your agent handles them correctly. This is the agent equivalent of unit testing.
+Оценка позволяет определять тестовые примеры — пары входных данных и ожидаемого поведения — и автоматически проверять, правильно ли ваш агент их обрабатывает. Это аналог модульного тестирования для агентов.
 
-We covered evaluation concepts in depth in Lesson 9. The key idea here is to start writing eval cases early, even for your first agent. It saves you from regressions later.
+Мы подробно рассмотрели концепции оценки в уроке 9. Ключевая идея здесь — начать писать тестовые примеры как можно раньше, даже для вашего первого агента. Это убережет вас от регрессий в дальнейшем.
 
-> **Full quickstart:** Follow along with the complete code at [ADK Quickstart](https://google.github.io/adk-docs/get-started/quickstart/)
+> **Full quickstart:** Полный код доступен по ссылке: [ADK Quickstart](https://google.github.io/adk-docs/get-started/quickstart/)
 
 ---
 
-## Agent types in ADK
+## Типы агентов в ADK
 
-ADK provides four agent types, each designed for a different kind of task. Picking the right type is like picking the right data structure - it shapes everything that follows.
+ADK предоставляет четыре типа агентов, каждый из которых предназначен для решения различных задач. Выбор правильного типа подобен выбору правильной структуры данных — он определяет все последующие действия.
 
-### LlmAgent (The Default)
+### LlmAgent (по умолчанию)
 
-This is the agent type you will use most often. It uses a language model to make decisions about what to do next.
+Это тип агента, который вы будете использовать чаще всего. Он использует языковую модель для принятия решений о дальнейших действиях.
 
-**When to use it:**
-- The task requires reasoning and judgment
-- The agent needs to decide which tools to call based on context
-- User interaction is conversational
+**Когда его использовать:**
+- Задача требует рассуждений и оценки
+- Агент должен решить, какие инструменты вызвать, исходя из контекста
+- Взаимодействие с пользователем носит разговорный характер
 
-**How it works:** The model receives the user's message, the available tools, and the conversation history. It decides whether to call a tool, ask a clarifying question, or respond directly. This is the ReAct loop in action.
+**Как это работает:** Модель получает сообщение пользователя, доступные инструменты и историю разговора. Она решает, следует ли вызвать инструмент, задать уточняющий вопрос или ответить напрямую. Это цикл ReAct в действии.
 
 ```python
 from google.adk.agents import Agent
@@ -211,16 +211,16 @@ researcher = Agent(
 )
 ```
 
-### Sequentialagent (steps in order)
+### Последовательный агент (шаги по порядку)
 
-A SequentialAgent runs a fixed list of sub-agents one after another, like a pipeline.
+Последовательный агент запускает фиксированный список подагентов один за другим, как в конвейере.
 
-**When to use it:**
-- The task has clear, ordered stages
-- Each stage depends on the output of the previous one
-- You want predictable, repeatable execution
+**Когда его использовать:**
+- Задача имеет четкие, упорядоченные этапы
+- Каждый этап зависит от результата предыдущего
+- Вам нужно предсказуемое, повторяемое выполнение
 
-**Example:** A content creation pipeline where one agent researches, the next writes a draft, and the third edits for grammar and style.
+**Пример:** Конвейер создания контента, где один агент проводит исследование, следующий пишет черновик, а третий редактирует текст на предмет грамматики и стиля.
 
 ```python
 from google.adk.agents import SequentialAgent
@@ -231,18 +231,18 @@ pipeline = SequentialAgent(
 )
 ```
 
-**Analogy:** Think of a SequentialAgent like an assembly line in a factory. Each station does one job and passes the result to the next station.
+**Аналогия:** Представьте себе SequentialAgent как конвейер на заводе. Каждая станция выполняет одну задачу и передает результат следующей станции.
 
-### Parallelagent (steps at the same time)
+### Parallelagent (выполняет шаги одновременно)
 
-A ParallelAgent runs multiple sub-agents concurrently and collects their results.
+ParallelAgent запускает несколько под-агентов одновременно и собирает их результаты.
 
-**When to use it:**
-- You have independent subtasks that do not depend on each other
-- Speed matters and you want to reduce wall-clock time
-- You need multiple perspectives on the same input
+**Когда его использовать:**
+- У вас есть независимые подзадачи, которые не зависят друг от друга
+- Скорость важна, и вы хотите сократить время выполнения
+- Вам нужны несколько точек зрения на одни и те же входные данные
 
-**Example:** Evaluating a piece of code by running a security reviewer, a performance reviewer, and a style reviewer all at the same time.
+**Пример:** Оценка фрагмента кода путем одновременного запуска проверки безопасности, проверки производительности и проверки стиля.
 
 ```python
 from google.adk.agents import ParallelAgent
@@ -253,18 +253,18 @@ review_team = ParallelAgent(
 )
 ```
 
-**Analogy:** Think of a ParallelAgent like a team brainstorm where everyone works on their part simultaneously and then presents their findings.
+**Аналогия:** Представьте ParallelAgent как командный мозговой штурм, где каждый одновременно работает над своей частью, а затем представляет свои результаты.
 
-### Loopagent (repeat until done)
+### Loopagent (повторять до завершения)
 
-A LoopAgent runs its sub-agents in a cycle until a termination condition is met.
+LoopAgent запускает своих подагентов в цикле до тех пор, пока не будет выполнено условие завершения.
 
-**When to use it:**
-- The task requires iterative refinement
-- You want to keep improving output until it meets a quality threshold
-- The number of iterations is not known in advance
+**Когда его использовать:**
+- Задача требует итеративного уточнения
+- Вы хотите постоянно улучшать результат, пока он не достигнет порогового значения качества
+- Количество итераций заранее неизвестно
 
-**Example:** A writing agent that drafts content, evaluates it against criteria, and revises until the quality score exceeds a threshold.
+**Пример:** Агент для написания текстов, который создает черновик контента, оценивает его по критериям и вносит правки до тех пор, пока оценка качества не превысит пороговое значение.
 
 ```python
 from google.adk.agents import LoopAgent
@@ -276,18 +276,18 @@ refiner = LoopAgent(
 )
 ```
 
-**Analogy:** Think of a LoopAgent like a code review cycle - you write, get feedback, revise, and repeat until the reviewer approves.
+**Аналогия:** Представьте себе LoopAgent как цикл проверки кода — вы пишете, получаете обратную связь, редактируете и повторяете, пока рецензент не одобрит.
 
-### Choosing the right agent type
+### Выбор подходящего типа агента
 
-| Agent Type | Use When | Example |
+| Тип агента | Когда использовать | Пример |
 |---|---|---|
 | LlmAgent | Flexible reasoning needed | Chatbot, research assistant |
 | SequentialAgent | Fixed pipeline of steps | ETL, content creation |
 | ParallelAgent | Independent parallel tasks | Multi-reviewer systems |
 | LoopAgent | Iterative refinement | Quality improvement loops |
 
-You can also combine these types. A SequentialAgent might have an LlmAgent as one of its steps. A LoopAgent might contain a ParallelAgent inside it. This composability is one of ADK's strengths.
+Вы также можете комбинировать эти типы. SequentialAgent может содержать LlmAgent в качестве одного из своих шагов. LoopAgent может содержать ParallelAgent внутри себя. Эта возможность компоновки — одно из преимуществ ADK.
 
 > **Learn more:** [ADK Agent Types](https://google.github.io/adk-docs/agents/)
 
