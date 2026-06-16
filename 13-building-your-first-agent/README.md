@@ -282,22 +282,22 @@ refiner = LoopAgent(
 
 | Тип агента | Когда использовать | Пример |
 |---|---|---|
-| LlmAgent | Flexible reasoning needed | Chatbot, research assistant |
-| SequentialAgent | Fixed pipeline of steps | ETL, content creation |
-| ParallelAgent | Independent parallel tasks | Multi-reviewer systems |
-| LoopAgent | Iterative refinement | Quality improvement loops |
+| LlmAgent | Требуется гибкое мышление | Чат-бот, научный ассистент |
+| SequentialAgent | Фиксированный конвейер шагов | ETL, создание контента |
+| ParallelAgent | Независимые параллельные задачи | Системы с несколькими рецензентами |
+| LoopAgent | Итеративное уточнение | Циклы улучшения качества |
 
 Вы также можете комбинировать эти типы. SequentialAgent может содержать LlmAgent в качестве одного из своих шагов. LoopAgent может содержать ParallelAgent внутри себя. Эта возможность компоновки — одно из преимуществ ADK.
 
-> **Learn more:** [ADK Agent Types](https://google.github.io/adk-docs/agents/)
+> **Узнать больше:** [ADK Agent Types](https://google.github.io/adk-docs/agents/)
 
 ---
 
-## Building a multi-tool agent
+## Создание многофункционального агента
 
-Most real agents need more than one tool. Let us look at how to combine multiple capabilities.
+Большинству реальных агентов требуется более одного инструмента. Давайте рассмотрим, как объединить несколько возможностей.
 
-### Combining search, code execution, and custom tools
+### Объединение поиска, выполнения кода и пользовательских инструментов
 
 ```python
 from google.adk.agents import Agent
@@ -340,29 +340,29 @@ shopping_agent = Agent(
 )
 ```
 
-The key to multi-tool agents is clear instruction about when to use each tool. Without guidance, the model might search the web when it should query your database, or vice versa.
+Ключ к успеху многофункциональных агентов — четкие инструкции о том, когда использовать каждый инструмент. Без указаний модель может искать информацию в интернете, когда ей следует обращаться к вашей базе данных, или наоборот.
 
-### Tool design principles
+### Принципы проектирования инструментов
 
-When building tools for your agent, follow these guidelines:
+При создании инструментов для вашего агента следуйте этим рекомендациям:
 
-1. **One tool, one job.** Each tool should do one thing well. Do not create a mega-tool that handles five different operations.
+1. **Один инструмент, одна задача.** Каждый инструмент должен хорошо выполнять одну задачу. Не создавайте мега-инструмент, который обрабатывает пять различных операций.
 
-2. **Descriptive names and docstrings.** The model picks tools based on their names and descriptions. `get_order_status` is better than `fetch_data`.
+2. **Описательные имена и строки документации.** Модель выбирает инструменты на основе их имен и описаний. `get_order_status` лучше, чем `fetch_data`.
 
-3. **Clear parameter types.** Use type hints. The model needs to know whether to pass a string, number, or object.
+3. **Четкие типы параметров.** Используйте подсказки типов. Модель должна знать, передавать ли строку, число или объект.
 
-4. **Graceful error handling.** Return helpful error messages instead of crashing. The model can often recover if it understands what went wrong.
+4. **Корректная обработка ошибок.** Возвращайте полезные сообщения об ошибках вместо сбоя. Модель часто может восстановиться, если понимает, что пошло не так.
 
-5. **Deterministic when possible.** Tools that return consistent results for the same inputs are easier for the model to reason about.
+5. **По возможности используйте детерминированный подход.** Инструменты, которые дают согласованные результаты для одних и тех же входных данных, проще для модели в плане анализа.
 
 ---
 
-## Building an agent team
+## Создание команды агентов
 
-Sometimes one agent cannot handle everything. You might need specialists - one agent for research, another for writing, a third for fact-checking. ADK lets you build agent teams with a root agent that delegates to sub-agents.
+Иногда один агент не может справиться со всем. Вам могут понадобиться специалисты — один агент для исследований, другой для написания текстов, третий для проверки фактов. ADK позволяет создавать команды агентов с корневым агентом, который делегирует задачи субагентам.
 
-### The root agent pattern
+### Паттерн корневого агента
 
 ```python
 from google.adk.agents import Agent
@@ -402,206 +402,207 @@ coordinator = Agent(
 )
 ```
 
-### When to use sub-agents vs. multiple tools
+### Когда использовать субагентов, а когда несколько инструментов
 
-| Approach | Best For | Trade-offs |
+| Подход | Лучший вариант | Компромиссы |
 |---|---|---|
-| One agent, many tools | Tasks where a single reasoning chain works | Simpler, but the agent might struggle with too many tools |
-| Multiple sub-agents | Tasks that benefit from specialization | More flexible, but adds coordination overhead |
+| Один агент, много инструментов | Задачи, где работает единая цепочка рассуждений | Проще, но агент может испытывать трудности со слишком большим количеством инструментов |
+| Несколько субагентов | Задачи, которые выигрывают от специализации | Более гибкие, но добавляют накладные расходы на координацию |
 
-**Rule of thumb:** If your single agent has more than 10-15 tools and starts getting confused about which to use, consider splitting into sub-agents with focused tool sets.
+**Эффективное правило:** Если у вашего единственного агента более 10-15 инструментов, и он начинает путаться, какие из них использовать, рассмотрите возможность разделения на субагентов с узкоспециализированными наборами инструментов.
 
-### Communication between agents
+### Взаимодействие между агентами
 
-Sub-agents in ADK share a session state, which acts as a shared workspace. The root agent can pass context to sub-agents, and sub-agents can store results that other agents can access.
+Субагенты в ADK совместно используют состояние сессии, которое действует как общее рабочее пространство. Корневой агент может передавать контекст субагентам, а субагенты могут хранить результаты, к которым могут получить доступ другие агенты.
 
-Think of it like a shared document in a team project. The coordinator writes the brief, the researcher adds findings, and the writer uses those findings to draft content.
+Представьте это как общий документ в командном проекте. Координатор составляет краткое описание, исследователь добавляет результаты, а автор использует эти результаты для составления контента.
 
 ---
 
-## Tips for writing good system instructions
+## Советы по написанию хороших инструкций для системы
 
-The system instruction (prompt) is the single most important factor in how your agent behaves. Here are practical guidelines.
+Инструкция для системы (подсказка) — это самый важный фактор в поведении вашего агента. Вот несколько практических рекомендаций.
 
-### Be specific about the role
+### Будьте конкретны в отношении роли
 
-**Weak:**
+**Слабо:**
 ```
-You are a helpful assistant.
-```
-
-**Better:**
-```
-You are a customer support agent for Acme Corp. You help customers
-with order tracking, returns, and product questions. You have access
-to the order database and can look up orders by ID or email.
+Вы — полезный помощник.
 ```
 
-### Set clear boundaries
-
-Tell the agent what it should and should not do:
-
+**Лучше:**
 ```
-You ONLY handle questions about orders, returns, and products.
-For billing questions, tell the customer to contact billing@acme.com.
-Never make promises about delivery dates unless the tracking system confirms them.
-Never share internal pricing or cost information.
+Вы — агент службы поддержки клиентов Acme Corp. Вы помогаете клиентам
+с отслеживанием заказов, возвратами и вопросами о товарах. У вас есть доступ
+к базе данных заказов, и вы можете искать заказы по ID или электронной почте.
 ```
 
-### Provide examples
+### Установите четкие границы
 
-Show the agent how you want it to behave:
-
-```
-When a customer asks about their order status, follow this pattern:
-1. Ask for their order ID if they have not provided one
-2. Look up the order using the get_order tool
-3. Summarize the status in plain language
-4. If the order is delayed, apologize and offer to escalate
-
-Example:
-Customer: "Where is my order?"
-You: "I'd be happy to help track your order. Could you share your order ID? It should start with ORD- and you can find it in your confirmation email."
-```
-
-### Define the output format
-
-If you want structured responses, say so:
+Укажите агенту, что он должен и чего не должен делать:
 
 ```
-Always respond in this format:
-- Start with a one-sentence summary
-- Provide details in bullet points
-- End with a suggested next step
+Вы обрабатываете ТОЛЬКО вопросы о заказах, возвратах и ​​товарах.
+По вопросам выставления счетов посоветуйте клиенту обратиться по адресу billing@acme.com.
+Никогда не давайте обещаний о сроках доставки, если система отслеживания их не подтверждает.
+Никогда не разглашайте внутреннюю информацию о ценах или затратах.
 ```
 
-### Common instruction mistakes
+### Приведите примеры
 
-| Mistake | Why It Is a Problem | Fix |
+Покажите агенту, как вы хотите, чтобы он себя вел:
+
+```
+Когда клиент спрашивает о статусе своего заказа, следуйте этому шаблону:
+1. Запросите идентификатор заказа, если он его не предоставил.
+2. Найдите заказ с помощью инструмента get_order.
+3. Кратко опишите статус простым языком.
+4. Если заказ задерживается, извинитесь и предложите передать вопрос на рассмотрение вышестоящему руководству
+
+Пример:
+Клиент: "Где мой заказ?"
+Вы: "Я с удовольствием помогу отследить ваш заказ. Не могли бы вы сообщить идентификатор вашего заказа  ID? Он должен начинаться с ORD-, и вы можете найти его в электронном письме с подтверждением."
+```
+
+### Определение формата вывода
+
+Если вам нужны структурированные ответы, укажите это:
+
+```
+Всегда отвечайте в этом формате:
+- Начните с краткого резюме в одном предложении
+- Предоставьте подробности в виде маркированного списка
+- Завершите предложением следующего шага
+
+```
+
+### Распространенные ошибки в инструкциях
+
+| Ошибка | Почему это проблема | Как исправить |
 |---|---|---|
-| Too vague ("be helpful") | The model has no specific guidance | Define the role, scope, and behavior |
-| Too long (2000+ words) | Key instructions get lost in noise | Keep it focused, use structure |
-| No tool guidance | The model guesses when to use tools | Explain when each tool is appropriate |
-| No error handling | The agent does not know what to do when things fail | Add fallback instructions |
-| No boundaries | The agent tries to handle everything | Define what is out of scope |
+| Слишком расплывчато («будьте полезны»)) | У модели нет конкретных указаний | Определите роль, область действия и поведение |
+| Слишком длинно (более 2000 слов) | Ключевые инструкции теряются в шуме | Сосредоточьтесь, используйте структуру |
+| Нет указаний по инструментам | Модель угадывает, когда использовать инструменты | Объясните, когда каждый инструмент уместен |
+| Нет обработки ошибок | Агент не знает, что делать, когда что-то идет не так | Добавьте резервные инструкции |
+| Нет границ | Агент пытается обработать все | Определите, что выходит за рамки |
 
 ---
 
-## Common mistakes beginners make
+## Распространенные ошибки новичков
 
-### 1. starting too complex
+### 1. cлишком сложный старт
 
-You do not need a multi-agent system with 10 tools on day one. Start with one agent and one tool. Get that working perfectly before adding complexity.
+Вам не нужна многоагентная система с 10 инструментами с первого дня. Начните с одного агента и одного инструмента. Добейтесь идеальной работы всего этого, прежде чем добавлять сложности.
 
-### 2. ignoring the system instruction
+### 2. игнорирование системных инструкций
 
-Many beginners focus on tools and code but write a one-line system instruction. The instruction is your primary lever for controlling agent behavior. Invest time in it.
+Многие новички сосредотачиваются на инструментах и ​​коде, но пишут системную инструкцию в одну строку. Инструкция — это ваш основной рычаг управления поведением агента. Уделите ей время.
 
-### 3. not testing tool calls
+### 3. отсутствие тестирования вызовов инструментов
 
-Your agent is only as reliable as its tools. Test each tool function independently before wiring it into the agent. If `get_weather("London")` throws an exception, your agent will too.
+Надежность вашего агента зависит от надежности его инструментов. Протестируйте каждую функцию инструмента независимо, прежде чем подключать ее к агенту. Если `get_weather("London")` выдает исключение, ваш агент тоже его выдаст.
 
-### 4. forgetting to handle errors
+### 4. забывание обработки ошибок
 
-Tools fail. APIs time out. Data is missing. Your agent needs instructions for what to do when things go wrong. Add error handling in both your tool code and your system instructions.
+Инструменты дают сбой. API выдают ошибку тайм-аута. Данные отсутствуют. Вашему агенту нужны инструкции о том, что делать, когда что-то идет не так. Добавьте обработку ошибок как в код инструмента, так и в системные инструкции.
 
-### 5. using the wrong model
+### 5. использование неправильной модели
 
-Not every task needs the most powerful model. For simple routing and tool-calling, a lighter model like Flash works well and saves money. Reserve larger models for tasks that genuinely require complex reasoning.
+Не для каждой задачи нужна самая мощная модель. Для простой маршрутизации и вызова инструментов хорошо подходит более лёгкая модель, например, Flash, и это экономит деньги. Более крупные модели следует использовать для задач, действительно требующих сложных рассуждений.
 
-### 6. skipping evaluation
+### 6. пропуск оценки
 
-If you do not have eval cases, you do not know whether your changes improve or break things. Write at least 5-10 test cases before you start iterating on prompts.
+Если у вас нет оценочных примеров, вы не знаете, следует ли использовать модель.
 
-### 7. putting secrets in code
+### 7. хранение секретов в коде
 
-Never hardcode API keys or credentials in your agent code. Use environment variables or a secrets manager. This is standard software engineering practice, but it is easy to forget when prototyping.
+Никогда не прописывайте ключи API или учетные данные в коде агента. Используйте переменные окружения или менеджер секретов. Это стандартная практика разработки программного обеспечения, но о ней легко забыть при прототипировании.
 
 ---
 
-## Putting it all together
+## подведение итогов
 
-Here is a mental model for the entire process of building an ADK agent:
+Вот мысленная модель всего процесса создания агента ADK:
 
 ```
-1. Define the goal
-   "What should this agent accomplish?"
+1. Определите цель
+   "Что должен сделать этот агент?"
         |
         v
-2. Choose the agent type
-   LlmAgent? Sequential? Parallel? Loop?
+2. Выберите тип агента
+   LlmAgent? Последовательный? Параллельный? Циклический?
         |
         v
-3. Write the system instruction
-   Role, scope, boundaries, examples
+3. Напишите системную инструкцию
+   Роль, область действия, границы, примеры
         |
         v
-4. Define the tools
-   What actions does the agent need?
+4. Определите инструменты
+   Какие действия необходимы агенту?
         |
         v
-5. Wire it together
-   Agent + model + instruction + tools
+5. Соедините компоненты
+   Агент + модель + инструкция + инструменты
         |
         v
-6. Test locally
+6. Протестируйте локально
    adk web / adk run
         |
         v
-7. Write eval cases
-   Input -> expected behavior
+7. Напишите оценочные сценарии
+   Входные данные -> ожидаемое поведение
         |
         v
-8. Iterate
-   Improve instructions, add tools, refine
+8. Итерация
+   Улучшите инструкции, добавьте инструменты, уточните
         |
         v
-9. Deploy
-   Agent Engine or your own infrastructure
+9. Разверните
+   Agent Engine или собственную инфраструктуру
 ```
 
-Each step feeds the next. And steps 6-8 are a loop - you will go around multiple times before moving to step 9.
+Каждый шаг передает данные следующему. Шаги 6-8 представляют собой цикл — вы будете повторять его несколько раз, прежде чем перейти к шагу 9.
 
 ---
 
-## Quick reference: ADK CLI commands
+## Краткий справочник: Команды CLI ADK
 
-| Command | What It Does |
+| Команда | Что делает |
 |---|---|
-| `pip install google-adk` | Install ADK |
-| `adk create <name>` | Scaffold a new agent project |
-| `adk web` | Start the local dev server with web UI |
-| `adk run <agent>` | Run an agent from the command line |
-| `adk eval <agent> <data>` | Run evaluation cases against your agent |
-| `adk deploy` | Deploy your agent to Agent Engine |
+| `pip install google-adk` | Установка ADK |
+| `adk create <name>` | Создание нового проекта агента |
+| `adk web` | Запуск локального сервера разработки с веб-интерфейсом |
+| `adk run <agent>` | Запуск агента из командной строки |
+| `adk eval <agent> <data>` | Запуск оценочных сценариев для вашего агента |
+| `adk deploy` | Развертывание вашего агента в Agent Engine |
 
 ---
 
-## Where to learn more
+## Где узнать больше
 
-- **Getting started with ADK:** [https://google.github.io/adk-docs/get-started/](https://google.github.io/adk-docs/get-started/)
-- **Full quickstart tutorial:** [https://google.github.io/adk-docs/get-started/quickstart/](https://google.github.io/adk-docs/get-started/quickstart/)
-- **Agent types in depth:** [https://google.github.io/adk-docs/agents/](https://google.github.io/adk-docs/agents/)
-- **Tools reference:** [https://google.github.io/adk-docs/tools/](https://google.github.io/adk-docs/tools/)
-
----
-
-## Key takeaways
-
-1. **An ADK agent needs three things:** a name, a model, and system instructions. Tools are optional but are what make agents genuinely useful.
-
-2. **Start with LlmAgent.** It handles most use cases. Reach for SequentialAgent, ParallelAgent, or LoopAgent only when you have a clear structural reason.
-
-3. **System instructions are your primary control lever.** Be specific about the role, set boundaries, provide examples, and include error handling guidance.
-
-4. **Test early and often.** Use `adk web` for interactive testing and `adk eval` for automated regression checks.
-
-5. **Build incrementally.** One agent, one tool, one eval case. Get each piece working before adding the next.
+- **Начало работы с ADK:** [https://google.github.io/adk-docs/get-started/](https://google.github.io/adk-docs/get-started/)
+- **Полное руководство по быстрому запуску:** [https://google.github.io/adk-docs/get-started/quickstart/](https://google.github.io/adk-docs/get-started/quickstart/)
+- **Типы агентов подробно:** [https://google.github.io/adk-docs/agents/](https://google.github.io/adk-docs/agents/)
+- **Справочник инструментов:** [https://google.github.io/adk-docs/tools/](https://google.github.io/adk-docs/tools/)
 
 ---
 
-## What is next?
+## Основные выводы
 
-Now that you can build an agent, you need to understand how agents communicate with the wider world. In the next lesson, we will explore two important protocols - MCP and A2A - that let agents talk to tools and to each other using open standards.
+1. **Агенту ADK нужны три вещи:** имя, модель и системные инструкции. Инструменты необязательны, но именно они делают агентов по-настоящему полезными.
 
-[Next: Lesson 14 - Agent Protocols: MCP and A2A -->](../14-agent-protocols-mcp-and-a2a/README.md)
+2. **Начните с LlmAgent.** Он обрабатывает большинство сценариев использования. Используйте SequentialAgent, ParallelAgent или LoopAgent только тогда, когда у вас есть веская структурная причина.
+
+3. **Системные инструкции — ваш основной рычаг управления.** Четко определите роль, установите границы, приведите примеры и включите рекомендации по обработке ошибок.
+
+4. **Тестируйте на ранних этапах и часто.** Используйте `adk web` для интерактивного тестирования и `adk eval` для автоматизированных регрессионных проверок.
+
+5. **Создавайте поэтапно.** Один агент, один инструмент, один оценочный случай. Добейтесь работоспособности каждой части, прежде чем добавлять следующую.
+
+---
+
+## Что дальше?
+
+Теперь, когда вы можете создать агента, вам нужно понять, как агенты взаимодействуют с окружающим миром. В следующем уроке мы рассмотрим два важных протокола — MCP и A2A — которые позволяют агентам общаться с инструментами и друг с другом, используя открытые стандарты.
+
+[Далее: Урок 14 - Протоколы взаимодействия агентов: MCP и A2A -->](../14-agent-protocols-mcp-and-a2a/README.md)
