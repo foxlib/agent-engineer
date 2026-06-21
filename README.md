@@ -33,58 +33,58 @@
 | 09 | [Оценка и тестирование агентов](./09-evaluating-and-testing-agents/README.md) | Как узнать, действительно ли ваш агент работает — метрики, оценки и наблюдаемость |
 | 10 | [Ограничения и безопасность](./10-guardrails-and-safety/README.md) | Обеспечение доверия к агентам — безопасность, согласованность и ответственный ИИ |
 
-### Part 2: building and shipping
+### Часть 2: создание и внедрение
 
-| # | Lesson | What you will learn |
+| # | Урок | Чему вы научитесь |
 |---|--------|-------------------|
-| 11 | [From prototype to production](./11-from-prototype-to-production/README.md) | The journey from demo to deployed - CI/CD, rollout, and operations |
-| 12 | [Getting started with Vertex AI and ADK](./12-getting-started-with-vertex-and-adk/README.md) | The Google Cloud AI stack for agents - what is available and how it fits together |
-| 13 | [Building your first agent](./13-building-your-first-agent/README.md) | Hands-on - build a working agent with ADK step by step |
-| 14 | [Agent protocols - MCP and A2A](./14-agent-protocols-mcp-and-a2a/README.md) | How agents talk to tools and to each other using open standards |
+| 11 | [От прототипа до производства](./11-from-prototype-to-production/README.md) | Путь от демонстрации до развертывания — CI/CD, развертывание и эксплуатация |
+| 12 | [Начало работы с Vertex AI и ADK](./12-getting-started-with-vertex-and-adk/README.md) | Стек Google Cloud AI для агентов — что доступно и как все это работает |
+| 13 | [Создание вашего первого агента](./13-building-your-first-agent/README.md) | Практическое занятие — пошаговое создание работающего агента с ADK |
+| 14 | [Протоколы агентов — MCP и A2A](./14-agent-protocols-mcp-and-a2a/README.md) | Как агенты взаимодействуют с инструментами и друг с другом, используя открытые стандарты |
 
-### Part 3: deep dives
+### Часть 3: углубленный анализ
 
-| # | Lesson | What you will learn |
+| # | Урок | Чему вы научитесь |
 |---|--------|-------------------|
-| 15 | [AGENTS.md](./15-agents-md/README.md) | Giving AI coding agents context about your project with a standard config file |
-| 16 | [MCP deep dive](./16-mcp-deep-dive/README.md) | How MCP works under the hood, MCP vs. CLI tools, and security considerations |
-| 17 | [Agent skills](./17-agent-skills/README.md) | Packaging reusable domain expertise as portable skill modules |
-| 18 | [Orchestrators](./18-orchestrators/README.md) | Managing agent control flow - patterns, frameworks, and best practices |
-| 19 | [Where to go from here](./19-where-to-go-from-here/README.md) | Resources, codelabs, community, and next steps |
+| 15 | [AGENTS.md](./15-agents-md/README.md) | Предоставление агентам ИИ контекста о вашем проекте с помощью стандартного файла конфигурации |
+| 16 | [Углубленный анализ MCP](./16-mcp-deep-dive/README.md) | Как работает MCP изнутри, MCP против инструментов CLI и вопросы безопасности |
+| 17 | [Навыки агентов](./17-agent-skills/README.md) | Упаковка многократно используемых экспертных знаний в виде переносимых модулей навыков |
+| 18 | [Оркестраторы](./18-orchestrators/README.md) | Управление потоком управления агента — шаблоны, фреймворки и лучшие практики |
+| 19 | [Что делать дальше](./19-where-to-go-from-here/README.md) | Ресурсы, кодовые лаборатории, сообщество и дальнейшие шаги |
 
-## How to use this course
+## Как использовать этот курс
 
-- **Read in order** if you are new to agents. Each lesson builds on the previous one.
-- **Jump around** if you already know the basics. Each lesson is self-contained enough to read on its own.
-- **Follow the links** to official docs, codelabs, and tutorials for hands-on practice. We intentionally link out to maintained resources rather than duplicating API docs or code samples that go stale.
+- **Читайте по порядку** если вы новичок в работе с агентами. Каждый урок основывается на предыдущем.
+- **Переходите от одного урока к другому** если вы уже знакомы с основами. Каждый урок достаточно самодостаточен, чтобы его можно было читать отдельно.
+- **Переходите по ссылкам** к официальной документации, примерам кода и учебным пособиям для практического применения. Мы намеренно ссылаемся на поддерживаемые ресурсы, а не дублируем устаревшую документацию по API или примеры кода.
 
-## Philosophy
+## Философия
 
-This course follows a few principles:
+Этот курс основан на нескольких принципах:
 
-- **Analogies first.** We use everyday comparisons to explain complex concepts before diving into technical details.
-- **Fundamentals over frameworks.** Understand the "why" before the "how." Frameworks change, but the core ideas stick around.
-- **Link, don't duplicate.** For API references, code samples, and setup instructions, we point to official Google Cloud docs and codelabs. This keeps our content focused on concepts and ensures you always see up-to-date information.
-- **Honest about trade-offs.** Every architectural choice has costs. We try to show both sides.
+- **Аналогии прежде всего.** Мы используем повседневные сравнения для объяснения сложных концепций, прежде чем углубляться в технические детали.
+- **Основы важнее фреймворков.** Понимайте «почему», прежде чем понимать «как». Фреймворки меняются, но основные идеи остаются неизменными.
+- **Ссылки, а не дублирование.** Для справки по API, примеров кода и инструкций по настройке мы ссылаемся на официальную документацию Google Cloud и Codelabs. Это позволяет нам фокусироваться на концепциях и гарантирует, что вы всегда будете получать актуальную информацию.
+- **Честность в отношении компромиссов.** Каждое архитектурное решение имеет свою цену. Мы стараемся показать обе стороны.
 
-## Prerequisites
+## Предварительные требования
 
-- Basic Python knowledge (functions, classes, HTTP requests)
-- A Google Cloud account ([free trial available](https://cloud.google.com/free))
-- Familiarity with REST APIs and JSON
+- Базовые знания Python (функции, классы, HTTP-запросы)
+- Учетная запись Google Cloud ([доступна бесплатная пробная версия](https://cloud.google.com/free))
+- Знание REST API и JSON
 
-## Additional resources
+## Дополнительные ресурсы
 
-- [Google Cloud AI documentation](https://cloud.google.com/ai)
-- [Vertex AI documentation](https://cloud.google.com/vertex-ai/docs)
-- [Agent Development Kit (ADK) documentation](https://google.github.io/adk-docs/)
-- [Google Cloud AI codelabs](https://codelabs.developers.google.com/?cat=AI)
-- [Gemini API documentation](https://ai.google.dev/docs)
+- [Документация Google Cloud AI](https://cloud.google.com/ai)
+- [Документация Vertex AI](https://cloud.google.com/vertex-ai/docs)
+- [Документация Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
+- [Код-лаборатории Google Cloud AI](https://codelabs.developers.google.com/?cat=AI)
+- [Документация Gemini API](https://ai.google.dev/docs)
 
-## Contributing
+## Вклад
 
-Found a typo? Have a suggestion? PRs and issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+Нашли опечатку? Есть предложение? Приветствуются запросы на слияние (PR) и сообщения об ошибках. См. [CONTRIBUTING.md](./CONTRIBUTING.md) для получения рекомендаций.
 
-## License
+## Лицензия
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE](./LICENSE) file for details.
+Этот проект распространяется под лицензией Apache 2.0 — подробности см. в файле  [LICENSE](./LICENSE).
