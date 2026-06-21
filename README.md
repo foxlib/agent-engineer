@@ -1,37 +1,37 @@
-# Agent Engineer - a course for software engineers
+# Инженер по разработке агентов - курс для инженеров-программистов
 
-Learn the fundamentals of AI agents and how to build them with Google Cloud AI.
+Изучите основы работы агентов искусственного интеллекта и научитесь создавать их с помощью Google Cloud AI.
 
-## Who is this for?
+## Для кого предназначен этот курс?
 
-Software engineers who want to understand what AI agents are, how they work, and how to build them. No prior AI/ML experience required - just curiosity and some Python knowledge.
+Для инженеров-программистов, которые хотят понять, что такое агенты искусственного интеллекта, как они работают и как их создавать. Предыдущий опыт в области ИИ/машинного обучения не требуется — достаточно любознательности и некоторых знаний языка Python.
 
-## Course overview
+## Обзор курса
 
-This course is split into three parts:
+Этот курс состоит из трёх частей:
 
-**Part 1: Fundamentals (101)** - Understand the core concepts behind AI agents. These lessons are platform-agnostic and focused on building your mental model.
+**Часть 1: Основы (101)** - изучите ключевые концепции, лежащие в основе агентов искусственного интеллекта. Эти уроки не привязаны к конкретной платформе и направлены на формирование вашей ментальной модели.
 
-**Part 2: Building and shipping (201)** - Put those fundamentals into practice using Google Cloud AI, Vertex AI, and the Agent Development Kit (ADK).
+**Часть 2: Создание и развертывание (201)** - Применение этих основ на практике с использованием Google Cloud AI, Vertex AI и Agent Development Kit (ADK).
 
-**Part 3: Deep dives (301)** - Go deeper on specific topics that matter for real-world agent development.
+**Часть 3: Углублённое изучение (301)** - более подробно рассмотрите конкретные темы, имеющие значение для разработки агентов в реальных условиях.
 
-## Lessons
+## Уроки
 
-### Part 1: fundamentals
+### Часть 1: Основы
 
-| # | Lesson | What you will learn |
+| # | Урок | Чему вы научитесь |
 |---|--------|-------------------|
-| 01 | [What are AI agents?](./01-what-are-ai-agents/README.md) | The big picture - what agents are, why they matter, and when to use them |
-| 02 | [How agents think](./02-how-agents-think/README.md) | LLMs as the reasoning engine - how models plan, decide, and generate |
-| 03 | [Tools - giving agents hands](./03-tools-giving-agents-hands/README.md) | Function calling, tool design, and connecting agents to the real world |
-| 04 | [Agentic design patterns](./04-agentic-design-patterns/README.md) | ReAct, reflection, planning, and other core patterns |
-| 05 | [Memory and context](./05-memory-and-context/README.md) | How agents remember things - sessions, context windows, and long-term memory |
-| 06 | [Planning and reasoning](./06-planning-and-reasoning/README.md) | How agents break down complex tasks and make decisions |
-| 07 | [Multi-agent systems](./07-multi-agent-systems/README.md) | When one agent is not enough - coordination, delegation, and teamwork |
-| 08 | [Agentic RAG](./08-agentic-rag/README.md) | Going beyond basic retrieval - agents that search, evaluate, and refine |
-| 09 | [Evaluating and testing agents](./09-evaluating-and-testing-agents/README.md) | How to know if your agent actually works - metrics, evals, and observability |
-| 10 | [Guardrails and safety](./10-guardrails-and-safety/README.md) | Keeping agents trustworthy - security, alignment, and responsible AI |
+| 01 | [Что такое ИИ-агенты?](./01-what-are-ai-agents/README.md) | Общая картина — что такое агенты, почему они важны и когда их использовать |
+| 02 | [Как думают агенты](./02-how-agents-think/README.md) | LLM как механизм рассуждений — как модели планируют, принимают решения и генерируют |
+| 03 | [Инструменты — помощь агентам](./03-tools-giving-agents-hands/README.md) | Вызов функций, проектирование инструментов и связь агентов с реальным миром |
+| 04 | [Шаблоны проектирования агентов](./04-agentic-design-patterns/README.md) | ReAct, рефлексия, планирование и другие основные шаблоны |
+| 05 | [Память и контекст](./05-memory-and-context/README.md) | Как агенты запоминают информацию — сессии, контекстные окна и долговременная память |
+| 06 | [Планирование и рассуждение](./06-planning-and-reasoning/README.md) | Как агенты разбивают сложные задачи и принимают решения |
+| 07 | [Многоагентные системы](./07-multi-agent-systems/README.md) | Когда одного агента недостаточно — координация, делегирование и командная работа |
+| 08 | [Агентный RAG](./08-agentic-rag/README.md) | Выход за рамки базового поиска — агенты, которые ищут, оценивают и уточняют |
+| 09 | [Оценка и тестирование агентов](./09-evaluating-and-testing-agents/README.md) | Как узнать, действительно ли ваш агент работает — метрики, оценки и наблюдаемость |
+| 10 | [Ограничения и безопасность](./10-guardrails-and-safety/README.md) | Обеспечение доверия к агентам — безопасность, согласованность и ответственный ИИ |
 
 ### Part 2: building and shipping
 
