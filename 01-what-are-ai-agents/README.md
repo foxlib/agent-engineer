@@ -70,77 +70,77 @@
 
 ---
 
-## Core components of an AI agent
+## Основные компоненты ИИ-агента
 
-Every agent system, regardless of framework, has three fundamental components:
+Каждая агентная система, независимо от используемой платформы, имеет три основных компонента:
 
-### 1. the model (the brain)
+### 1. модель (мозг)
 
-This is the language model at the center of the agent. It handles:
+Это языковая модель, находящаяся в центре агента. Она отвечает за:
 
-- **Understanding** the user's goal
-- **Reasoning** about what steps to take
-- **Deciding** which tool to use (and with what parameters)
-- **Interpreting** the results of tool calls
-- **Generating** the final response
+- **Понимание** цели пользователя
+- **Рассуждение** о том, какие шаги предпринять
+- **Выбор** инструмента для использования (и с какими параметрами)
+- **Интерпретацию** результатов вызовов инструментов
+- **Генерацию** окончательного ответа
 
-The model you choose matters. Harder tasks (multi-step reasoning, complex code generation, nuanced decision-making) benefit from frontier models like Gemini or Opus. Simpler tasks (classification, extraction, straightforward Q&A) can use lighter models like Gemini Flash to save cost and latency.
+Выбор модели имеет значение. Для более сложных задач (многошаговое рассуждение, сложная генерация кода, принятие решений с учетом нюансов) лучше подходят передовые модели, такие как Gemini или Opus. Для более простых задач (классификация, извлечение информации, простые вопросы и ответы) можно использовать более легкие модели, такие как Gemini Flash, чтобы сэкономить средства и уменьшить задержку.
 
-### 2. tools (the hands)
+### 2. инструменты (руки)
 
-Tools are what let an agent interact with the world beyond text generation. Without tools, an agent is just a chatbot. With tools, it can:
+Инструменты — это то, что позволяет агенту взаимодействовать с миром за пределами генерации текста. Без инструментов агент — это просто чат-бот. С инструментами он может:
 
-- **Retrieve information**: Search the web, query a database, read a file
-- **Take actions**: Send an email, create a ticket, deploy code
-- **Compute**: Run calculations, execute code, transform data
+- **Получить информацию**: поиск в интернете, запрос к базе данных, чтение файла
+- **Выполнить действия**: отправить электронное письмо, создать заявку, развернуть код
+- **Вычислить**: выполнить вычисления, запустить код, преобразовать данные
 
-Tools are typically defined as functions with clear names, descriptions, and parameter schemas. The model decides when and how to call them. We will cover tools in depth in Lesson 3.
+Инструменты обычно определяются как функции с четкими именами, описаниями и схемами параметров. Модель решает, когда и как их вызывать. Мы подробно рассмотрим инструменты в уроке 3.
 
-### 3. the orchestration layer (the control loop)
+### 3. уровень оркестровки (цикл управления)
 
-This is the glue that connects the model and tools into a functioning system. The orchestration layer manages:
+Это связующее звено, объединяющее модель и инструменты в функционирующую систему. Уровень оркестровки управляет:
 
-- **The agent loop**: Think -> Act -> Observe -> Repeat
-- **State management**: What has happened so far, what context the model needs
-- **Error handling**: What to do when a tool call fails
-- **Termination conditions**: When to stop looping and return a result
-- **Guardrails**: Safety checks, output validation, scope limits
+- **Циклом агента**: Думать -> Действовать -> Наблюдать -> Повторять
+- **Управление состоянием**: Что произошло до сих пор, какой контекст нужен модели
+- **Обработка ошибок**: Что делать, если вызов инструмента не удался
+- **Условия завершения**: Когда остановить цикл и вернуть результат
+- **Ограничения**: Проверки безопасности, проверка выходных данных, ограничения области действия
 
-The simplest orchestration pattern looks like this:
-
-```
-1. Receive user goal
-2. Send goal + available tools to the model
-3. Model returns either:
-   a. A final answer -> Return to user
-   b. A tool call -> Execute the tool, add result to context, go to step 2
-```
-
-This is often called a **ReAct loop** (Reasoning + Acting). More sophisticated patterns exist - we will explore them in later lessons.
-
-### How the components work together
+Простейший шаблон оркестровки выглядит так:
 
 ```
-User Goal
+1. Получение цели пользователя
+2. Отправка цели + доступных инструментов модели
+3. Модель возвращает либо:
+   a. Окончательный ответ -> Вернуть пользователю
+   b. Выполнить инструмент, добавить результат в контекст, перейти к шагу 2
+```
+
+Это часто называют **циклом ReAct** (Рассуждение + Действие). Существуют и более сложные шаблоны — мы рассмотрим их в последующих уроках.
+
+### Как компоненты взаимодействуют друг с другом
+
+```
+Цель пользователя
     |
     v
 +-------------------+
-| Orchestration     |
-| Layer             |
+| Слой              |
+| оркестрации       |
 |                   |
 |  +-------------+  |
-|  |   Model     |  |    "I need to search for X"
-|  |  (Brain)    |--+--->  Tool Call
+|  |   Модель    |  |    "Мне нужно найти X"
+|  |  (Мозг)     |--+--->  Вызов инструмента
 |  +-------------+  |         |
 |        ^          |         v
 |        |          |  +-------------+
-|        +----------+--+   Tools     |
-|     Tool results  |  |  (Hands)   |
-|                   |  +-------------+
+|        +----------+--+ Инструменты |
+|     Результаты    |  |   (Руки)    |
+| работы инструмента|  +-------------+
 +-------------------+
     |
     v
-Final Response
+Итоговый ответ
 ```
 
 ---
