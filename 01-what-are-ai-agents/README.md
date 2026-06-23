@@ -1,72 +1,72 @@
-# Lesson 1: What are AI Agents?
+# Урок 1: Что такое ИИ-агенты?
 
-## Introduction
+## Введение
 
-You have probably used ChatGPT, Gemini, or Claude to answer a question or write some code. You typed something in, got a response, and moved on. That is a language model doing its thing - predicting useful text based on your input.
+Вы, вероятно, использовали ChatGPT, Gemini или Claude, чтобы ответить на вопрос или написать код. Вы что-то вводили, получали ответ и двигались дальше. Это языковая модель, выполняющая свою работу — предсказывающая полезный текст на основе вашего ввода.
 
-An AI agent is something different. An agent can **think**, **act**, and **remember**. It does not just answer your question - it figures out what steps to take, uses tools to carry those steps out, and adjusts its approach based on what happens along the way.
+ИИ-агент — это нечто другое. Агент может **думать**, **действовать** и **запоминать**. Он не просто отвечает на ваш вопрос — он определяет, какие шаги предпринять, использует инструменты для выполнения этих шагов и корректирует свой подход в зависимости от происходящего на этом пути.
 
-Think of it this way: if you hired a new engineer and only let them talk but never touch a keyboard, open a browser, or read documentation, they would be limited. That is an LLM on its own. Now give that engineer access to your codebase, a terminal, your company docs, and the ability to ask clarifying questions. That is an agent.
+Представьте себе: если бы вы наняли нового инженера и позволили ему только говорить, но никогда не прикасаться к клавиатуре, не открывать браузер и не читать документацию, его возможности были бы ограничены. Это само по себе является языковой моделью. Теперь предоставьте этому инженеру доступ к вашей кодовой базе, терминалу, документам вашей компании и возможность задавать уточняющие вопросы. Это и есть агент.
 
-This lesson covers what AI agents are, how they differ from plain language models, what components make them work, and when you should (and should not) use them.
-
----
-
-## What is an AI agent in plain terms?
-
-An AI agent is a software system that uses a language model as its core reasoning engine, combined with the ability to take actions in the real world. Those actions might include:
-
-- Searching the web
-- Querying a database
-- Calling an API
-- Reading or writing files
-- Sending an email
-- Running code
-
-The key distinction is **autonomy**. A plain LLM responds to a single prompt. An agent receives a goal and then independently decides what steps to take, executes those steps, observes the results, and continues until the goal is met (or it determines the goal cannot be met).
-
-### The new hire analogy
-
-Imagine you hire a new software engineer. On their first day, you would not expect them to know everything. But you would expect them to:
-
-1. **Read documentation** to understand the codebase
-2. **Use tools** like an IDE, terminal, and browser
-3. **Ask questions** when something is unclear
-4. **Break down tasks** into smaller steps
-5. **Check their work** before saying they are done
-6. **Learn from mistakes** and adjust their approach
-
-An AI agent works the same way. It has a base of knowledge (the language model), access to tools, and an orchestration layer that manages the loop of thinking, acting, and observing.
+В этом уроке рассматривается, что такое агенты искусственного интеллекта, чем они отличаются от моделей, использующих обычный язык программирования, из каких компонентов они работают и когда их следует (и когда не следует) использовать.
 
 ---
 
-## LLM vs. agent: what is the difference?
+## Что такое ИИ-агент простыми словами?
 
-This is the most important distinction to internalize early.
+ИИ-агент — это программная система, использующая языковую модель в качестве основного механизма рассуждений, в сочетании со способностью совершать действия в реальном мире. Эти действия могут включать:
 
-| Aspect | LLM (alone) | AI Agent |
+- Поиск в интернете
+- Запрос к базе данных
+- Вызов API
+- Чтение или запись файлов
+- Отправка электронного письма
+- Выполнение кода
+
+Ключевое отличие — **автономия**. Обычный LLM отвечает на один запрос. Агент получает цель, а затем самостоятельно решает, какие шаги предпринять, выполняет эти шаги, наблюдает за результатами и продолжает до тех пор, пока цель не будет достигнута (или пока не определит, что цель не может быть достигнута).
+
+### Аналогия с новым сотрудником
+
+Представьте, что вы нанимаете нового инженера-программиста. В первый день вы не ожидаете, что он будет знать всё. Но от них можно было бы ожидать следующего:
+
+1. **Читать документацию**, чтобы понять код
+2. **Использовать инструменты**, такие как IDE, терминал и браузер
+3. **Задавать вопросы**, когда что-то непонятно
+4. **Разбивать задачи** на более мелкие шаги
+5. **Проверять свою работу**, прежде чем сказать, что она завершена
+6. **Учиться на ошибках** и корректировать свой подход
+
+Агент ИИ работает аналогичным образом. Он имеет базу знаний (языковую модель), доступ к инструментам и уровень оркестровки, который управляет циклом мышления, действия и наблюдения.
+
+---
+
+## LLM против агента: в чем разница?
+
+Это самое важное различие, которое нужно усвоить как можно раньше.
+
+| Аспект | LLM (самостоятельно) | ИИ-агент |
 |---|---|---|
-| **What it does** | Generates text based on a prompt | Pursues a goal through multiple steps |
-| **Interaction** | Single turn (or multi-turn chat) | Autonomous loop of thought and action |
-| **Tools** | None - text in, text out | Can call functions, APIs, search, etc. |
-| **Memory** | Limited to context window | Can persist information across steps |
-| **Decision-making** | Responds to what you ask | Decides what to do next on its own |
-| **Error handling** | Gives you an answer (right or wrong) | Can observe errors and retry with a new approach |
+| **Что он делает** | Генерирует текст на основе запроса | Достигает цели в несколько этапов |
+| **Взаимодействие** | Один ход (или многоходовый чат) | Автономный цикл мышления и действия |
+| **Инструменты** | Нет - ввод текста, вывод текста | Может вызывать функции, API, осуществлять поиск и т. д. |
+| **Память** | Ограничена контекстным окном | Может сохранять информацию между этапами |
+| **Принятие решений** | Отвечает на ваши вопросы | Самостоятельно решает, что делать дальше |
+| **Обработка ошибок** | Дает ответ (правильный или неправильный) | Может отслеживать ошибки и повторять попытку с новым подходом |
 
-A helpful mental model:
+Полезная ментальная модель:
 
-- **LLM** = Brain
-- **Agent** = Brain + Hands + Memory
+- **LLM** = Мозг
+- **Agent** = Мозг + Руки + Память
 
-The brain (LLM) does the reasoning. The hands (tools) let it take action. The memory (state management) lets it keep track of what has happened and what still needs to be done.
+Мозг (LLM) выполняет рассуждения. Руки (инструменты) позволяют ему действовать. Память (управление состоянием) позволяет ему отслеживать, что произошло и что еще нужно сделать.
 
-### A concrete example
+### Конкретный пример
 
-**LLM alone:** You ask "What is the current price of GOOG stock?" The model might say "As of my last training data, it was around $140" - which could be months out of date.
+**Только LLM:** Вы спрашиваете: «Какова текущая цена акций GOOG?» Модель может ответить: «По последним данным для обучения, она составляла около 140 долларов» — что может быть устаревшей информацией на несколько месяцев.
 
-**Agent:** You ask the same question. The agent thinks "I need current stock data, I should use a finance API." It calls a stock price tool, gets the live price, and returns an accurate answer. If the API call fails, it might try a different data source.
+**Агент:** Вы задаете тот же вопрос. Агент думает: «Мне нужны актуальные данные по акциям, мне следует использовать финансовый API». Он вызывает инструмент для расчета цен на акции, получает текущую цену и возвращает точный ответ. Если вызов API не удается, он может попробовать другой источник данных.
 
-That loop - think, act, observe, repeat - is what makes an agent an agent.
+Этот цикл — думать, действовать, наблюдать, повторять — и делает агента агентом.
 
 ---
 
