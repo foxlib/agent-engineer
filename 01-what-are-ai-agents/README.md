@@ -145,37 +145,37 @@
 
 ---
 
-## A taxonomy of agent systems
+## Таксономия агентных систем
 
-Not all agents are created equal. It is helpful to think about agent systems on a spectrum of autonomy and capability, from Level 0 through Level 4.
+Не все агенты одинаковы. Полезно рассматривать агентные системы в спектре автономности и возможностей, от уровня 0 до уровня 4.
 
-### Level 0: basic reasoning (simple LLM
+### Уровень 0: базовое рассуждение (простая языковая модель)
 
-**What it is:** A language model answering questions with no tools or memory.
+**Что это:** Языковая модель, отвечающая на вопросы без инструментов или памяти.
 
-**Example:** You ask Gemini "Explain the CAP theorem" and it gives you a clear explanation from its training data.
+**Пример:** Вы спрашиваете Gemini:«Объясните теорему CAP», и она дает вам четкое объяснение на основе своих обучающих данных.
 
-**Capabilities:**
-- Text generation and comprehension
-- Single-turn or multi-turn conversation
-- No external data access
-- No ability to take actions
+**Возможности:**
+- Генерация и понимание текста
+- Одно- или многоходовый диалог
+- Отсутствие доступа к внешним данным
+- Отсутствие возможности выполнения действий
 
-**When it works well:** General knowledge questions, creative writing, brainstorming, summarization of provided text.
+**Когда работает хорошо:** Вопросы на общие знания, творческое письмо, мозговой штурм, обобщение предоставленного текста.
 
-### Level 1: connected problem-solver (tool-using agent)
+### Уровень 1: подключенный решатель проблем (агент, использующий инструменты)
 
-**What it is:** A model that can call tools to retrieve information or perform simple actions. This is where we cross the line from "chatbot" to "agent."
+**Что это:** Модель, которая может вызывать инструменты для получения информации или выполнения простых действий. Здесь мы переходим от «чат-бота» к «агенту»
 
-**Example:** A customer support bot that can look up order status by calling your order API, or a coding assistant that can search documentation.
+**Пример:** Бот службы поддержки клиентов, который может узнать статус заказа, вызвав ваш API заказов, или помощник по программированию, который может искать документацию.
 
-**Capabilities:**
-- Everything in Level 0
-- Function calling (tools)
-- Retrieval-Augmented Generation (RAG) for grounding in real data
-- Simple single-step or few-step task completion
+**Возможности:**
+- Все возможности уровня 0
+- Вызов функций (инструментов)
+- Генерация с расширенным поиском (RAG) для работы с реальными данными
+- Простое выполнение задач в один или несколько шагов
 
-**When it works well:** Tasks that require current data, API integrations, straightforward workflows with a small number of steps.
+**Когда работает хорошо:** Задачи, требующие актуальных данных, интеграции с API, простых рабочих процессов с небольшим количеством шагов.
 
 ### Level 2: strategic agent (autonomous with context)
 
